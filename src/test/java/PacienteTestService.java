@@ -12,7 +12,8 @@ public class PacienteTestService {
         BD.crearTablas();
         PacienteService pacienteService= new PacienteService(new PacienteDAOH2());
         //CUANDO
-        Paciente paciente= pacienteService.buscarPacientePorId(2);
+        Paciente paciente= pacienteService.buscarPacientePorId(1);
+        System.out.println("datos encontrados: "+paciente.toString());
         //ENTONCES
         Assertions.assertTrue(paciente!=null);
     }
