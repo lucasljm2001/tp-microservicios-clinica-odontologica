@@ -56,3 +56,4 @@ public class DomicilioDAOH2 implements iDao<Domicilio> {
         return List.of();
     }
 }
+
