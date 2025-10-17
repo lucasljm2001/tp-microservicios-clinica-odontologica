@@ -1,13 +1,10 @@
-package dao;
+package com.clinica.dao;
 
-import model.Domicilio;
-import model.Odontologo;
-import model.Paciente;
+import com.clinica.model.Odontologo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 

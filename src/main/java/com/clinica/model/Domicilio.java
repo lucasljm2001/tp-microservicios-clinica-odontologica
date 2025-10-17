@@ -1,4 +1,4 @@
-package model;
+package com.clinica.model;
 
 public class Domicilio {
     private Integer id;

@@ -1,7 +1,8 @@
-package dao;
+package com.clinica.dao;
 
-import model.Domicilio;
-import model.Paciente;
+import com.clinica.model.Domicilio;
+import com.clinica.model.Paciente;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class PacienteDAOH2 implements iDao<Paciente>{
     private static final String SQL_SELECT_ONE=" SELECT * FROM PACIENTES WHERE ID=?";
 

@@ -1,8 +1,8 @@
-package service;
+package com.clinica.dao;
 
 import java.util.List;
 
-public interface iService<T> {
+public interface iDao<T> {
     T guardar(T t);
     T buscar(Integer id);
     void eliminar(Integer id);

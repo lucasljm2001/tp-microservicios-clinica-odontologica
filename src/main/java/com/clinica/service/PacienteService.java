@@ -1,10 +1,12 @@
-package service;
+package com.clinica.service;
 
-import dao.iDao;
-import model.Paciente;
+import com.clinica.dao.iDao;
+import com.clinica.model.Paciente;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class PacienteService implements iService<Paciente> {
     private iDao<Paciente> pacienteiDao;
 

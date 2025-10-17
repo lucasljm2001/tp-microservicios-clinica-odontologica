@@ -1,4 +1,4 @@
-package model;
+package com.clinica.model;
 
 import java.time.LocalDate;
 

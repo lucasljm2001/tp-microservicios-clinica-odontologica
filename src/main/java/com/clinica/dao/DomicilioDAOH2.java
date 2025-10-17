@@ -1,6 +1,6 @@
-package dao;
+package com.clinica.dao;
 
-import model.Domicilio;
+import com.clinica.model.Domicilio;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
