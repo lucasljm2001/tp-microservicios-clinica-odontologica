@@ -1,6 +1,7 @@
 package com.clinica.dao;
 
 import com.clinica.model.Odontologo;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class OdontologoDAOH2 implements iDao<Odontologo> {
 
     public static final String SQL_INSERT=" INSERT INTO ODONTOLOGOS(NOMBRE, APELLIDO, MATRICULA) VALUES(?,?,?)";
@@ -19,6 +21,8 @@ public class OdontologoDAOH2 implements iDao<Odontologo> {
     public static final String SQL_UPDATE=" UPDATE ODONTOLOGOS SET NOMBRE=?, APELLIDO=?, MATRICULA=? WHERE ID=?";
 
     public static final String SQL_SELECT_BY_MATRICULA=" SELECT * FROM ODONTOLOGOS WHERE MATRICULA=?";
+    public static final String SQL_SELECT_BY_NOMBRE = "SELECT * FROM ODONTOLOGOS WHERE LOWER(NOMBRE) LIKE LOWER(?)";
+
 
     public static final String SQL_SELECT_ALL=" SELECT * FROM ODONTOLOGOS";
 
@@ -100,20 +104,31 @@ public class OdontologoDAOH2 implements iDao<Odontologo> {
 
     @Override
     public Odontologo buscarGenerico(String parametro) {
-        Connection connection=null;
-        Odontologo odontologo= null;
-        try{
-            connection=BD.getConnection();
-            PreparedStatement ps_select_one= connection.prepareStatement(SQL_SELECT_BY_MATRICULA);
-            ps_select_one.setString(1,parametro);
-            ResultSet rs= ps_select_one.executeQuery();
-            while(rs.next()){
-                odontologo= new Odontologo(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4));
+        Connection connection = null;
+        Odontologo odontologo = null;
+
+        try {
+            connection = BD.getConnection();
+            PreparedStatement ps_select_one = connection.prepareStatement(SQL_SELECT_BY_NOMBRE);
+            ps_select_one.setString(1, parametro);
+            ResultSet rs = ps_select_one.executeQuery();
+
+            if (rs.next()) {
+                odontologo = new Odontologo(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4)
+                );
+                System.out.println("Odontólogo encontrado: " + odontologo.getNombre());
+            } else {
+                System.out.println("No se encontró ningún odontólogo con ese parámetro: " + parametro);
             }
-        }catch (Exception e){
-            System.out.println("Error buscando el odontologo: "+e.getMessage());
+
+        } catch (Exception e) {
+            System.out.println("Error buscando el odontólogo: " + e.getMessage());
         }
-        System.out.println("odontologo encontrado");
+
         return odontologo;
     }
 

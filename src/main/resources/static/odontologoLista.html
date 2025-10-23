@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Lista de Pacientes</title>
+    <title>Lista de Odontologos</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/get_Paciente.js"></script>
+    <script type="text/javascript" src="js/get_Odontologo.js"></script>
 </head>
 <body>
 <div class="container">
@@ -25,7 +25,7 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Gestion Pacientes
+                            Gestion Odontologos
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Another action</a></li>
@@ -37,8 +37,8 @@
         </div>
     </nav>
 
-    <div id="div_paciente_table">
-        <h1>Lista de Pacientes <button id="btn_add" class="btn btn-success btn-sm" title="Agregar paciente" >+</button></h1>
+    <div id="div_odontologo_table">
+        <h1>Lista de Odontologos <button id="btn_add" class="btn btn-success btn-sm" title="Agregar Odontologo" >+</button></h1>
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="input-group">
@@ -49,16 +49,17 @@
             </div>
         </div>
         <div class="row col-md-6 table-responsive">
-            <table id="pacienteTable" class="table table-striped">
+            <table id="odontologoTable" class="table table-striped">
                 <thead>
                 <tr>
                     <th>Id</th>
                     <th>Nombre</th>
                     <th>Apellido</th>
+                    <th>Matricula</th>
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id="pacienteTableBody">
+                <tbody id="odontologoTableBody">
 
                 </tbody>
             </table>
@@ -67,11 +68,11 @@
     <div class="row">
         <div class="col-sm-6" style="display: none;
                                             background-color:#e6fffa; padding:10px; border-radius:3px"
-             id="div_paciente_updating">
-            <form id="update_paciente_form">
+             id="div_odontologo_updating">
+            <form id="update_odontologo_form">
                 <div class="form-group">
                     <label>Id:</label>
-                    <input type="text" class="form-control" id="paciente_id" readonly>
+                    <input type="text" class="form-control" id="odontologo_id" readonly>
                 </div>
                 <div class="form-group">
                     <label>Nombre:</label>
@@ -82,42 +83,9 @@
                     <input type="text" class="form-control" placeholder="apellido" id="apellido" required>
                 </div>
                 <div class="form-group">
-                    <label>Numero contacto:</label>
-                    <input type="number" class="form-control" placeholder="numeroContacto" id="numeroContacto" required>
+                    <label>Matricula:</label>
+                    <input type="text" class="form-control" placeholder="matricula" id="matricula" required>
                 </div>
-                <div class="form-group">
-                    <label>Fecha de ingreso:</label>
-                    <input type="date" class="form-control" id="fechaIngreso" required>
-                </div>
-
-                <h5>Domicilio</h5>
-                <div class="form-group">
-                    <label>Id Domicilio:</label>
-                    <input type="number" class="form-control" id="domicilio_id" placeholder="Id del domicilio" required>
-                </div>
-                <div class="form-group">
-                    <label>Calle:</label>
-                    <input type="text" class="form-control" id="domicilio_calle" required>
-                </div>
-                <div class="form-group">
-                    <label>Numero:</label>
-                    <input type="number" class="form-control" id="domicilio_numero" required>
-                </div>
-                <div class="form-group">
-                    <label>Localidad:</label>
-                    <input type="text" class="form-control" id="domicilio_localidad" required>
-                </div>
-                <div class="form-group">
-                    <label>Provincia:</label>
-                    <input type="text" class="form-control" id="domicilio_provincia" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" class="form-control" id="email" required>
-                </div>
-
-
                 <button type="submit" class="btn btn-primary">Modificar</button>
             </form>
             <div id="response" style="display:none; margin:10px">

@@ -2,9 +2,11 @@ package com.clinica.service;
 
 import com.clinica.dao.iDao;
 import com.clinica.model.Odontologo;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OdontologoService implements iService<Odontologo> {
     private iDao<Odontologo> odontologoiDao;
 
