@@ -9,17 +9,16 @@ import com.clinica.service.PacienteService;
 
 import java.util.List;
 
-@RestController //Sin tecnologia de vista
+@RestController
 @RequestMapping("/paciente") //todo lo que venga con endpoint pacinete
-@CrossOrigin(origins = "*") //Cualquier dominio puede consumir mi api
+@CrossOrigin(origins = "*")
 public class PacienteController {
-    //Quien representa el modelo DAO?
-        private PacienteService pacienteService;
+    private PacienteService pacienteService;
+
     @Autowired
     public PacienteController(PacienteService pacienteService) {
         this.pacienteService = pacienteService;
     }
-    //aqui deberian venir todos los metodos que conectan al com.clinica.service
     @GetMapping("/{id}")
     public ResponseEntity<Paciente> buscarPorId(@PathVariable Integer id){
         Paciente pacienteBuscando= pacienteService.buscar(id);
