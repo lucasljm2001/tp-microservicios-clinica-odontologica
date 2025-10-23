@@ -1,11 +1,11 @@
-import dao.BD;
-import dao.DomicilioDAOH2;
-import dao.PacienteDAOH2;
-import model.Paciente;
+import com.clinica.dao.BD;
+import com.clinica.dao.DomicilioDAOH2;
+import com.clinica.dao.PacienteDAOH2;
+import com.clinica.model.Paciente;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import service.DomicilioService;
-import service.PacienteService;
+import com.clinica.service.DomicilioService;
+import com.clinica.service.PacienteService;
 
 import java.util.List;
 

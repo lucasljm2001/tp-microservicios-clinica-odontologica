@@ -1,7 +1,7 @@
-package service;
+package com.clinica.service;
 
-import dao.iDao;
-import model.Domicilio;
+import com.clinica.dao.iDao;
+import com.clinica.model.Domicilio;
 
 public class DomicilioService implements  iService<Domicilio> {
     private iDao<Domicilio> domicilioiDao;

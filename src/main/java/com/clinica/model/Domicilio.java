@@ -1,4 +1,4 @@
-package model;
+package com.clinica.model;
 
 public class Domicilio {
     private Integer id;
@@ -6,6 +6,9 @@ public class Domicilio {
     private Integer numero;
     private String localidad;
     private String provincia;
+
+    public Domicilio() {
+    }
 
     public Domicilio(Integer id, String calle, Integer numero, String localidad, String provincia) {
         this.id = id;

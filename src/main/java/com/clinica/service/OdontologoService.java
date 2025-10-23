@@ -1,7 +1,7 @@
-package service;
+package com.clinica.service;
 
-import dao.iDao;
-import model.Odontologo;
+import com.clinica.dao.iDao;
+import com.clinica.model.Odontologo;
 
 import java.util.List;
 

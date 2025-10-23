@@ -1,7 +1,10 @@
-package dao;
+package com.clinica.dao;
 
-import model.Domicilio;
-import model.Paciente;
+import com.clinica.model.Domicilio;
+import com.clinica.model.Paciente;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class PacienteDAOH2 implements iDao<Paciente>{
     private static final String SQL_SELECT_ONE=" SELECT * FROM PACIENTES WHERE ID=?";
 
@@ -23,6 +27,7 @@ public class PacienteDAOH2 implements iDao<Paciente>{
 
     private static final String SQL_SELECT_ALL=" SELECT * FROM PACIENTES";
 
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public Paciente guardar(Paciente paciente) {
@@ -39,9 +44,9 @@ public class PacienteDAOH2 implements iDao<Paciente>{
             ps_insert.setString(6,paciente.getEmail());
 
             ps_insert.execute();
-            System.out.println("paciente guardado con exito");
+            LOGGER.info("paciente guardado con exito");
         }catch (Exception e){
-            System.out.println("Error buscando el paciente: "+e.getMessage());
+            LOGGER.error("Error buscando el paciente: {}", e.getMessage());
         }
         return paciente;
     }
@@ -158,3 +163,8 @@ public class PacienteDAOH2 implements iDao<Paciente>{
 
     }
 }
+
+
+
+
+

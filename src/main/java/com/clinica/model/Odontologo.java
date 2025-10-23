@@ -1,4 +1,4 @@
-package model;
+package com.clinica.model;
 
 public class Odontologo {
     private Integer id;

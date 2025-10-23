@@ -1,4 +1,4 @@
-package model;
+package com.clinica.model;
 
 import java.time.LocalDate;
 
@@ -10,6 +10,11 @@ public class Paciente {
     private LocalDate fechaIngreso;
     private Domicilio domicilio;
     private String email;
+
+    public Paciente(){
+
+    }
+
 
     public Paciente(Integer id, String nombre, String apellido, Integer numeroContacto, LocalDate fechaIngreso, Domicilio domicilio, String email) {
         this.nombre = nombre;
