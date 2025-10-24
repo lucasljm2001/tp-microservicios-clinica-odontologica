@@ -1,7 +1,7 @@
 package com.clinica.controller;
 
 
-import com.clinica.model.Paciente;
+import com.clinica.entity.Paciente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ public class PacienteController {
         this.pacienteService = pacienteService;
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Paciente> buscarPorId(@PathVariable Integer id){
+    public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id){
         Paciente pacienteBuscando= pacienteService.buscar(id);
         if(pacienteBuscando.getId()!=null){
               return ResponseEntity.ok(pacienteBuscando);
@@ -40,7 +40,7 @@ public class PacienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarPaciente(@PathVariable Integer id){
+    public ResponseEntity<String> eliminarPaciente(@PathVariable Long id){
         pacienteService.eliminar(id);
         return ResponseEntity.ok("Paciente eliminado");
     }

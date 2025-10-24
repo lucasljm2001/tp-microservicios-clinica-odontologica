@@ -1,13 +1,15 @@
 package com.clinica.service;
 
-import com.clinica.dao.iDao;
-import com.clinica.model.Domicilio;
+import com.clinica.entity.Domicilio;
+import com.clinica.repository.DomicilioRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class DomicilioService implements  iService<Domicilio> {
-    private iDao<Domicilio> domicilioiDao;
+    private DomicilioRepository domicilioRepository;
 
-    public DomicilioService(iDao<Domicilio> domicilioiDao) {
-        this.domicilioiDao = domicilioiDao;
+    public DomicilioService(DomicilioRepository domicilioRepository) {
+        this.domicilioRepository = domicilioRepository;
     }
 
     @Override
@@ -16,12 +18,12 @@ public class DomicilioService implements  iService<Domicilio> {
     }
 
     @Override
-    public Domicilio buscar(Integer id) {
-        return domicilioiDao.buscar(id);
+    public Domicilio buscar(Long id) {
+        return domicilioRepository.findById(id).orElse(null);
     }
 
     @Override
-    public void eliminar(Integer id) {
+    public void eliminar(Long id) {
 
     }
 
