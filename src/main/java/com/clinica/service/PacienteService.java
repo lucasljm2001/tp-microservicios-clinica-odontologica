@@ -1,46 +1,46 @@
 package com.clinica.service;
 
-import com.clinica.dao.iDao;
-import com.clinica.model.Paciente;
+import com.clinica.entity.Paciente;
+import com.clinica.repository.PacienteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class PacienteService implements iService<Paciente> {
-    private iDao<Paciente> pacienteiDao;
+    private PacienteRepository pacienteRepository;
 
-    public PacienteService(iDao<Paciente> pacienteiDao) {
-        this.pacienteiDao = pacienteiDao;
+    public PacienteService(PacienteRepository pacienteRepository) {
+        this.pacienteRepository = pacienteRepository;
     }
 
     @Override
     public Paciente guardar(Paciente paciente) {
-        return pacienteiDao.guardar(paciente);
+        return pacienteRepository.save(paciente);
     }
 
     @Override
-    public Paciente buscar(Integer id) {
-        return pacienteiDao.buscar(id);
+    public Paciente buscar(Long id) {
+        return pacienteRepository.findById(id).orElse(null);
     }
 
     @Override
-    public void eliminar(Integer id) {
-        pacienteiDao.eliminar(id);
+    public void eliminar(Long id) {
+        pacienteRepository.deleteById(id);
     }
 
     @Override
     public void actualizar(Paciente paciente) {
-        pacienteiDao.actualizar(paciente);
+        pacienteRepository.save(paciente);
     }
 
     @Override
     public Paciente buscarGenerico(String parametro) {
-        return pacienteiDao.buscarGenerico(parametro);
+        return pacienteRepository.findByNombre(parametro).orElse(null);
     }
 
     @Override
     public List<Paciente> buscarTodos() {
-        return pacienteiDao.buscarTodos();
+        return pacienteRepository.findAll();
     }
 }
