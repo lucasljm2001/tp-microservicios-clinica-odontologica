@@ -2,6 +2,7 @@ package com.clinica.service;
 
 import com.clinica.entity.Domicilio;
 import com.clinica.entity.Paciente;
+import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.DomicilioRepository;
 import com.clinica.repository.PacienteRepository;
 import org.junit.jupiter.api.Assertions;
@@ -35,7 +36,7 @@ class PacienteTestService {
     }
 
     @Test
-    public void buscarPaciente(){
+    public void buscarPaciente() throws ResourceNotFoundException {
         //CUANDO
         Paciente paciente= pacienteService.buscar(pacienteInicial.getId());
         System.out.println("datos encontrados: "+paciente.toString());
@@ -44,7 +45,7 @@ class PacienteTestService {
     }
 
     @Test
-    public void guardarPaciente(){
+    public void guardarPaciente() throws ResourceNotFoundException {
         //DADO
         Domicilio domicilioBart = domicilioRepository.save(new Domicilio("Evergreen",743,"Springfield","AnyState"));
         Paciente pacienteAGuardar= new Paciente("Bart","Simpson",123457,java.time.LocalDate.of(2025,10,10),domicilioBart,"bart@gmail.com");
@@ -63,20 +64,20 @@ class PacienteTestService {
     }
 
     @Test
-    public void eliminarPaciente(){
+    public void eliminarPaciente() {
         //DADO
-        Domicilio domicilioTemp = domicilioRepository.save(new Domicilio("Main",1,"Springfield","AnyState"));
-        Paciente nuevo = pacienteService.guardar(new Paciente("Temporal","Borrar",111111,java.time.LocalDate.now(),domicilioTemp,"temp@example.com"));
+        Domicilio domicilioTemp = domicilioRepository.save(new Domicilio("Main", 1, "Springfield", "AnyState"));
+        Paciente nuevo = pacienteService.guardar(new Paciente("Temporal", "Borrar", 111111, java.time.LocalDate.now(), domicilioTemp, "temp@example.com"));
 
         //CUANDO
         pacienteService.eliminar(nuevo.getId());
-        Paciente pacienteBuscado= pacienteService.buscar(nuevo.getId());
-        //ENTONCES
-        Assertions.assertNull(pacienteBuscado);
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            pacienteService.buscar(nuevo.getId());
+        });
     }
 
     @Test
-    public void actualizarPaciente(){
+    public void actualizarPaciente() throws ResourceNotFoundException {
         //DADO
         Paciente pacienteAActualizar= new Paciente(pacienteInicial.getId(),"Abraham","Simpson",123456,java.time.LocalDate.of(2025,10,10),domicilioInicial,"homero@gmail.com");
 
@@ -92,7 +93,7 @@ class PacienteTestService {
     }
 
     @Test
-    public void buscarPorNombre(){
+    public void buscarPorNombre() throws ResourceNotFoundException {
         //CUANDO
         Paciente paciente= pacienteService.buscarGenerico(pacienteInicial.getNombre());
         System.out.println("datos encontrados: "+paciente.toString());

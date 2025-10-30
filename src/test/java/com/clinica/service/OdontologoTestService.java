@@ -1,6 +1,7 @@
 package com.clinica.service;
 
 import com.clinica.entity.Odontologo;
+import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.OdontologoRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ class OdontologoTestService {
     }
 
     @Test
-    public void buscarOdontologo(){
+    public void buscarOdontologo() throws ResourceNotFoundException {
         //DADO
         //CUANDO
         Odontologo odontologo= odontologoService.buscar(doctorHibert.getId());
@@ -63,13 +64,13 @@ class OdontologoTestService {
 
         //CUANDO
         odontologoService.eliminar(nuevo.getId());
-        Odontologo odontologoBuscado= odontologoService.buscar(nuevo.getId());
-        //ENTONCES
-        Assertions.assertNull(odontologoBuscado);
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+               odontologoService.buscar(nuevo.getId());
+        });
     }
 
     @Test
-    public void actualizarOdontologo(){
+    public void actualizarOdontologo() throws ResourceNotFoundException {
         //DADO
         Odontologo odontologoAActualizar= new Odontologo(doctorHibert.getId(),"Apu","Nahasapeemapetilon","54321");
 

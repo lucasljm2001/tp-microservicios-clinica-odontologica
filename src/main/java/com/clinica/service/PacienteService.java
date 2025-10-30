@@ -1,9 +1,11 @@
 package com.clinica.service;
 
 import com.clinica.entity.Paciente;
+import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.PacienteRepository;
 import org.springframework.stereotype.Service;
 
+import java.lang.module.ResolutionException;
 import java.util.List;
 
 @Service
@@ -20,8 +22,9 @@ public class PacienteService implements iService<Paciente> {
     }
 
     @Override
-    public Paciente buscar(Long id) {
-        return pacienteRepository.findById(id).orElse(null);
+    public Paciente buscar(Long id) throws ResourceNotFoundException {
+        return pacienteRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Paciente no encontrado con id: " + id));
     }
 
     @Override
@@ -35,8 +38,9 @@ public class PacienteService implements iService<Paciente> {
     }
 
     @Override
-    public Paciente buscarGenerico(String parametro) {
-        return pacienteRepository.findByNombre(parametro).orElse(null);
+    public Paciente buscarGenerico(String parametro) throws ResourceNotFoundException {
+        return pacienteRepository.findByNombre(parametro).orElseThrow(()
+                -> new ResourceNotFoundException("Paciente no encontrado con el nombre: " + parametro));
     }
 
     @Override

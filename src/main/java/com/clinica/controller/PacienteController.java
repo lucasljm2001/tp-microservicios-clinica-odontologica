@@ -2,6 +2,7 @@ package com.clinica.controller;
 
 
 import com.clinica.entity.Paciente;
+import com.clinica.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +21,9 @@ public class PacienteController {
         this.pacienteService = pacienteService;
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id){
+    public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id) throws ResourceNotFoundException {
         Paciente pacienteBuscando= pacienteService.buscar(id);
-        if(pacienteBuscando.getId()!=null){
-              return ResponseEntity.ok(pacienteBuscando);
-    }
-        else{
-        return ResponseEntity.notFound().build(); //404
-        }
+        return ResponseEntity.ok(pacienteBuscando);
     }
     @GetMapping
     public ResponseEntity<List<Paciente>> listarPacientes(){
@@ -52,14 +48,9 @@ public class PacienteController {
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<Paciente> buscarPacientePorNombre(@RequestParam String nombre){
-        Paciente pacienteBuscado= pacienteService.buscarGenerico(nombre);
-        if(pacienteBuscado!=null){
-            return ResponseEntity.ok(pacienteBuscado);
-        }
-        else{
-            return ResponseEntity.notFound().build(); //404
-        }
+    public ResponseEntity<Paciente> buscarPacientePorNombre(@RequestParam String nombre) throws ResourceNotFoundException {
+        Paciente pacienteBuscado = pacienteService.buscarGenerico(nombre);
+        return ResponseEntity.ok(pacienteBuscado);
     }
 
 }
