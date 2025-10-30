@@ -1,6 +1,7 @@
 package com.clinica.service;
 
 import com.clinica.entity.Odontologo;
+import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.OdontologoRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class OdontologoService implements iService<Odontologo> {
     }
 
     @Override
-    public Odontologo buscar(Long id) {
-        return odontologoRepository.findById(id).orElse(null);
+    public Odontologo buscar(Long id) throws ResourceNotFoundException {
+        return odontologoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado con id: " + id));
     }
 
     @Override

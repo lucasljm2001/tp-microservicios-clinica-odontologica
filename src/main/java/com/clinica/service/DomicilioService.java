@@ -1,6 +1,7 @@
 package com.clinica.service;
 
 import com.clinica.entity.Domicilio;
+import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.DomicilioRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +19,8 @@ public class DomicilioService implements  iService<Domicilio> {
     }
 
     @Override
-    public Domicilio buscar(Long id) {
-        return domicilioRepository.findById(id).orElse(null);
+    public Domicilio buscar(Long id) throws ResourceNotFoundException {
+        return domicilioRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Domicilio no encontrado con id: "+id));
     }
 
     @Override

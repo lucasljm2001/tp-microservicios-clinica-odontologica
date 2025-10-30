@@ -1,5 +1,6 @@
 package com.clinica.controller;
-import com.clinica.model.Odontologo;
+import com.clinica.entity.Odontologo;
+import com.clinica.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,9 @@ public class OdontologoController {
     }
     //aqui deberian venir todos los metodos que conectan al com.clinica.service
     @GetMapping("/{id}")
-    public ResponseEntity<Odontologo> buscarPorId(@PathVariable Integer id){
+    public ResponseEntity<Odontologo> buscarPorId(@PathVariable Long id) throws ResourceNotFoundException {
         Odontologo OdontologoBuscando= odontologoService.buscar(id);
-        if(OdontologoBuscando.getId()!=null){
-            return ResponseEntity.ok(OdontologoBuscando);
-        }
-        else{
-            return ResponseEntity.notFound().build(); //404
-        }
+        return ResponseEntity.ok(OdontologoBuscando);
     }
     @GetMapping
     public ResponseEntity<List<Odontologo>> listarOdontologos(){
@@ -42,7 +38,7 @@ public class OdontologoController {
          return ResponseEntity.ok(odontologo);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarOdontologo(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminarOdontologo(@PathVariable Long id) {
         odontologoService.eliminar(id);
         return ResponseEntity.ok("Odontologo con id " + id + " eliminado");
     }
