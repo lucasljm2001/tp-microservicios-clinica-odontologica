@@ -46,4 +46,8 @@ public class Odontologo {
     public Long getId(){
         return id;
     }
+    public String getMatricula(){
+        return matricula;
+    }
+
 }
