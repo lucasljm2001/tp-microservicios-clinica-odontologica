@@ -1,7 +1,7 @@
 package com.clinica.service;
 
-import com.clinica.DTO.OdontologoDTO;
-import com.clinica.DTO.PacienteDTO;
+import com.clinica.dto.OdontologoDTO;
+import com.clinica.dto.PacienteDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.entity.Paciente;
@@ -29,24 +29,21 @@ public class OdontologoService{
         Odontologo odontologoGuardado= odontologoRepository.save(odontologo);
         return OdontologoAOdontologoDTO(odontologoGuardado);
     }
-    public OdontologoDTO OdontologoAOdontologoDTO(Odontologo odontologo){
-        OdontologoDTO odontologoDTO= new OdontologoDTO();
+    public OdontologoDTO OdontologoAOdontologoDTO(Odontologo odontologo) {
+        OdontologoDTO odontologoDTO = new OdontologoDTO();
         odontologoDTO.setId(odontologo.getId());
         odontologoDTO.setNombre(odontologo.getNombre());
         odontologoDTO.setApellido(odontologo.getApellido());
         odontologoDTO.setMatricula(odontologo.getMatricula());
         return odontologoDTO;
+    }
 
-    @Override
-    public Odontologo buscar(Long id) throws ResourceNotFoundException {
-        return odontologoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado con id: " + id));
+    public OdontologoDTO buscarOdontologoPorId(Long id) throws ResourceNotFoundException {
+        Odontologo odontologoBuscado= odontologoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado con id: " + id));
+        return OdontologoAOdontologoDTO(odontologoBuscado);
     }
-    public Optional<OdontologoDTO> buscarOdontologoPorId(Long id) {
-        Optional<Odontologo> odontologoBuscado= odontologoRepository.findById(id);
-        return odontologoBuscado.map(this::OdontologoAOdontologoDTO);
-    }
-    public Optional<Odontologo> buscarPorMatricula(String matricula){
-        return odontologoRepository.findByMatricula(matricula);
+    public Odontologo buscarPorMatricula(String matricula) throws ResourceNotFoundException {
+        return odontologoRepository.findByMatricula(matricula).orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado con matricula: " + matricula));
     }
 
     public void actualizar(Odontologo odontologo) {

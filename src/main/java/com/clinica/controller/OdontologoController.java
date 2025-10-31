@@ -1,12 +1,13 @@
 package com.clinica.controller;
 import com.clinica.entity.Odontologo;
+import com.clinica.exception.OdontologoExistenteException;
 import com.clinica.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.clinica.service.OdontologoService;
 
-imimport com.clinica.DTO.OdontologoDTO;
+import com.clinica.dto.OdontologoDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.service.OdontologoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,59 +24,44 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class OdontologoController {
     //Quien representa el modelo DAO?
-    private OdontologoService odontologoService;
     @Autowired
-    public OdontologoController(OdontologoService odontologoService) {
-        this.odontologoService = odontologoService;
-    }
+    private OdontologoService odontologoService;
+
     //aqui deberian venir todos los metodos que conectan al com.clinica.service
     @GetMapping("/{id}")
-    public ResponseEntity<Odontologo> buscarPorId(@PathVariable Long id) throws ResourceNotFoundException {
-        Odontologo OdontologoBuscando= odontologoService.buscar(id);
+    public ResponseEntity<OdontologoDTO> buscarPorId(@PathVariable Long id) throws ResourceNotFoundException {
+        OdontologoDTO OdontologoBuscando= odontologoService.buscarOdontologoPorId(id);
         return ResponseEntity.ok(OdontologoBuscando);
     }
     @GetMapping
-    public ResponseEntity<List<Odontologo>> listarOdontologos(){
-        return ResponseEntity.ok(odontologoService.buscarTodos());
+    public ResponseEntity<List<OdontologoDTO>> listarOdontologos(){
+        return ResponseEntity.ok(odontologoService.listarOdontologos());
     }
-    @PostMapping
-    public ResponseEntity<Odontologo> registrarOdontologo(@RequestBody Odontologo odontologo){
-        return ResponseEntity.ok(odontologoService.guardar(odontologo));
-    }
+
     @PutMapping
     public ResponseEntity<Odontologo> actualizarOdontologo(@RequestBody Odontologo odontologo){
        odontologoService.actualizar(odontologo);
-         return ResponseEntity.ok(odontologo);
-    }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarOdontologo(@PathVariable Long id) {
-        odontologoService.eliminar(id);
-        return ResponseEntity.ok("Odontologo con id " + id + " eliminado");
-    }
-    @GetMapping("/buscar")
-    public ResponseEntity<Odontologo> buscarPorNombre(@RequestParam String nombre) {
-        Odontologo odontologo = odontologoService.buscarGenerico(nombre);
-        if (odontologo != null) {
-            return ResponseEntity.ok(odontologo);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+       return ResponseEntity.ok(odontologo);
     }
 
-    private OdontologoService odontologoService;
+    @GetMapping("/buscar")
+    public ResponseEntity<Odontologo> buscarPorNombre(@RequestParam String matricula) throws ResourceNotFoundException {
+        Odontologo odontologo = odontologoService.buscarPorMatricula(matricula);
+        return ResponseEntity.ok(odontologo);
+    }
+
 
     @Autowired
     public OdontologoController(OdontologoService odontologoService) {
         this.odontologoService = odontologoService;
     }
     @PostMapping
-    public ResponseEntity<OdontologoDTO> registrarOdontologo(@RequestBody Odontologo odontologo) {
+    public ResponseEntity<OdontologoDTO> registrarOdontologo(@RequestBody Odontologo odontologo) throws ResourceNotFoundException {
         // Buscar por matricula en lugar de id, ya que el id aún no existe
-        Optional<Odontologo> odontologoExistente = odontologoService.buscarPorMatricula(odontologo.getMatricula());
-
-        if (odontologoExistente.isPresent()) {
-            return ResponseEntity.badRequest().build();
-        } else {
+        try {
+            Odontologo odontologoExistente = odontologoService.buscarPorMatricula(odontologo.getMatricula());
+            throw new OdontologoExistenteException("Odontologo ya existente con matricula: " + odontologo.getMatricula());
+        } catch (ResourceNotFoundException e) {
             OdontologoDTO guardado = odontologoService.guardarOdontologo(odontologo);
             return ResponseEntity.ok(guardado);
         }
@@ -88,13 +74,9 @@ public class OdontologoController {
         return ResponseEntity.ok(odontologoService.listarOdontologos());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<OdontologoDTO> obtenerOdontologoPorId(@PathVariable Long id){
-        Optional<OdontologoDTO> odontologoBuscado= odontologoService.buscarOdontologoPorId(id);
-        if(odontologoBuscado.isPresent()){
-            return ResponseEntity.ok(odontologoBuscado.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<OdontologoDTO> obtenerOdontologoPorId(@PathVariable Long id) throws ResourceNotFoundException {
+        OdontologoDTO odontologoBuscado= odontologoService.buscarOdontologoPorId(id);
+        return ResponseEntity.ok(odontologoBuscado);
     }
     @PutMapping
     public ResponseEntity<Odontologo> actualizarPaciente(@RequestBody Odontologo odontologo){

@@ -1,4 +1,4 @@
-package com.clinica.DTO;
+package com.clinica.dto;
 
 public class OdontologoDTO {
     private Long id;
