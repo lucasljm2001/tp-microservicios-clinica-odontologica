@@ -1,4 +1,4 @@
-package com.clinica.DTO;
+package com.clinica.dto;
 
 public class DomicilioDTO {
     private Long id;
