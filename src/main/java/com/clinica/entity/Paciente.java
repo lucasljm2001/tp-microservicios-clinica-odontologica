@@ -21,7 +21,7 @@ public class Paciente {
     private Integer numeroContacto;
     @Column
     private LocalDate fechaIngreso;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "domicilio_id",referencedColumnName = "id")
     private Domicilio domicilio;
     @Column(unique = true)

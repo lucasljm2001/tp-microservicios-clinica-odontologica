@@ -1,8 +1,9 @@
 package com.clinica.service;
 
 
-import com.clinica.DTO.TurnoDTO;
+import com.clinica.dto.TurnoDTO;
 import com.clinica.entity.Turno;
+import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.TurnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,9 +38,9 @@ public class TurnoService {
         turnoRepository.deleteById(id);
     }
 
-    public Optional<TurnoDTO> buscarTurnoPorId(Long id) {
-        Optional<Turno> turnoBuscado= turnoRepository.findById(id);
-        return turnoBuscado.map(this::turnoATurnoDTO);
+    public TurnoDTO buscarTurnoPorId(Long id) throws ResourceNotFoundException {
+        Turno turnoBuscado= turnoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Turno no encontrado con id: " + id));
+        return turnoATurnoDTO(turnoBuscado);
     }
 
     public void actualizar(Turno turno) {

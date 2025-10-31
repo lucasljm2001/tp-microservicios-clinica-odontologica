@@ -1,6 +1,6 @@
 package com.clinica.service;
 
-import com.clinica.DTO.OdontologoDTO;
+import com.clinica.dto.OdontologoDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.OdontologoRepository;
@@ -36,49 +36,46 @@ class OdontologoTestService {
     public void buscarOdontologo() throws ResourceNotFoundException {
         //DADO
         //CUANDO
-        Optional<OdontologoDTO> odontologo= odontologoService.buscarOdontologoPorId(doctorHibert.getId());
+        OdontologoDTO odontologo= odontologoService.buscarOdontologoPorId(doctorHibert.getId());
         System.out.println("datos encontrados: "+odontologo.toString());
         //ENTONCES
         Assertions.assertNotNull(odontologo);
     }
 
     @Test
-    public void guardarOdontologo(){
+    public void guardarOdontologo() throws ResourceNotFoundException {
         //DADO
         Odontologo odontologAGuardar= new Odontologo("Apu","Nahasapeemapetilon","67891234678");
 
         //CUANDO
         OdontologoDTO guardado = odontologoService.guardarOdontologo(odontologAGuardar);
 
-        Optional<OdontologoDTO> odontologoBuscado= odontologoService.buscarOdontologoPorId(odontologAGuardar.getId());
+        OdontologoDTO odontologoBuscado= odontologoService.buscarOdontologoPorId(odontologAGuardar.getId());
 
         //ENTONCES
         Assertions.assertNotNull(guardado);
         Assertions.assertNotNull(odontologoBuscado);
         Assertions.assertEquals(
                 odontologAGuardar.getNombre(),
-                odontologoBuscado.map(OdontologoDTO::getNombre).orElse(null)
+                odontologoBuscado.getNombre()
         );
         Assertions.assertEquals(
                 odontologAGuardar.getApellido(),
-                odontologoBuscado.map(OdontologoDTO::getApellido).orElse(null)
+                odontologoBuscado.getApellido()
         );
 
     }
 
     @Test
-    public void eliminarOdontologo(){
+    public void eliminarOdontologo() throws ResourceNotFoundException {
         //DADO
         Odontologo nuevo = new Odontologo("Temporal","Borrar","99999");
         odontologoService.guardarOdontologo(nuevo);
 
         //CUANDO
         odontologoService.eliminar(nuevo.getId());
-        Optional<OdontologoDTO> odontologoBuscado= odontologoService.buscarOdontologoPorId(nuevo.getId());
-        //ENTONCES
-        Assertions.assertTrue(odontologoBuscado.isEmpty());
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-               odontologoService.buscar(nuevo.getId());
+               odontologoService.buscarOdontologoPorId(nuevo.getId());
         });
     }
 
@@ -87,26 +84,27 @@ class OdontologoTestService {
         //DADO
         Odontologo odontologoAActualizar= new Odontologo(doctorHibert.getId(),"Apu","Nahasapeemapetilon","54321");
 
-        Assertions.assertEquals("Doctor",odontologoService.buscarOdontologoPorId(doctorHibert.getId()).map(OdontologoDTO::getNombre).orElse(""));
+        Assertions.assertEquals("Doctor",odontologoService.buscarOdontologoPorId(doctorHibert.getId()).getNombre());
         //CUANDO
         odontologoService.actualizar(odontologoAActualizar);
 
-        Optional<OdontologoDTO> odontologoBuscado= odontologoService.buscarOdontologoPorId(doctorHibert.getId());
+        OdontologoDTO odontologoBuscado= odontologoService.buscarOdontologoPorId(doctorHibert.getId());
 
         //ENTONCES
-        Assertions.assertEquals("Apu",odontologoBuscado.map(OdontologoDTO::getNombre).orElse(""));
+        Assertions.assertEquals("Apu",odontologoBuscado.getNombre());
 
     }
 
     @Test
-    public void buscarPorMatricula(){
+    public void buscarPorMatricula() throws ResourceNotFoundException {
         //DADO;
+
         //CUANDO
-        Optional<Odontologo> odontologo= odontologoService.buscarPorMatricula(doctorHibert.getNombre());
+        Odontologo odontologo= odontologoService.buscarPorMatricula(doctorHibert.getMatricula());
         System.out.println("datos encontrados: "+odontologo.toString());
         //ENTONCES
         Assertions.assertNotNull(odontologo);
-        Assertions.assertEquals("Doctor",odontologo.map(Odontologo::getNombre).orElse(""));
+        Assertions.assertEquals("Doctor",odontologo.getNombre());
     }
 
 

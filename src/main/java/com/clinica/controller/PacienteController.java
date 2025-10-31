@@ -7,6 +7,7 @@ import com.clinica.dto.PacienteDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.entity.Paciente;
 import com.clinica.entity.Turno;
+import com.clinica.exception.PacienteExistenteException;
 import com.clinica.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class PacienteController {
         this.pacienteService = pacienteService;
     }
     @GetMapping("/{id}")
-    public ResponseEntity<com.clinica.dto.PacienteDTO> buscarPorId(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<PacienteDTO> buscarPorId(@PathVariable Long id) throws ResourceNotFoundException {
         PacienteDTO pacienteBuscando= pacienteService.buscarPacientePorId(id);
         return ResponseEntity.ok(pacienteBuscando);
     }
@@ -37,25 +38,24 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<PacienteDTO> registrarPaciente(@RequestBody Paciente paciente) {
+    public ResponseEntity<PacienteDTO> registrarPaciente(@RequestBody PacienteDTO paciente) throws PacienteExistenteException{
         // Buscar por email en lugar de id, ya que el id aún no existe
-        Optional<Paciente> pacienteExistente = pacienteService.buscarPorEmail(paciente.getEmail());
-
-        if (pacienteExistente.isPresent()) {
-            return ResponseEntity.badRequest().build();
-
-        } else {
-            PacienteDTO guardado = pacienteService.guardarPaciente(paciente);
+        try {
+            Paciente pacienteExistente = pacienteService.buscarPorEmail(paciente.getEmail());
+            throw new PacienteExistenteException("Paciente ya existente con email: " + paciente.getEmail());
+        } catch (ResourceNotFoundException e) {
+            Paciente nuevoPaciente = new Paciente();
+            nuevoPaciente.setNombre(paciente.getNombre());
+            nuevoPaciente.setApellido(paciente.getApellido());
+            nuevoPaciente.setEmail(paciente.getEmail());
+            nuevoPaciente.setNumeroContacto(paciente.getNumeroContacto());
+            // Aquí deberías asignar el domicilio si es necesario
+            PacienteDTO guardado = pacienteService.guardarPaciente(nuevoPaciente);
             return ResponseEntity.ok(guardado);
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<PacienteDTO>> obtenerPacientes(){
-        System.out.println("Obteniendo lista de pacientes...");
-        System.out.println(pacienteService.listarPacientes());
-        return ResponseEntity.ok(pacienteService.listarPacientes());
-    }
+
 
     @PutMapping
     public ResponseEntity<Paciente> actualizarPaciente(@RequestBody Paciente paciente){
@@ -63,13 +63,9 @@ public class PacienteController {
         return ResponseEntity.ok(paciente);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarPaciente(@PathVariable Long id) {
-        boolean eliminado = pacienteService.eliminar(id);
-        if (eliminado) {
-            return ResponseEntity.ok("Paciente eliminado");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<String> eliminarPaciente(@PathVariable Long id) throws ResourceNotFoundException {
+        pacienteService.eliminar(id);
+        return ResponseEntity.ok("Paciente eliminado");
     }
 
     @GetMapping("/buscar")

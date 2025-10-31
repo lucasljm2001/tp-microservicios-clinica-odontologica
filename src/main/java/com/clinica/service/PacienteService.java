@@ -39,21 +39,17 @@ public class PacienteService{
         Paciente pacienteBuscado= pacienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado con id: " + id));
         return pacienteAPacienteDTO(pacienteBuscado);
     }
-    public Optional<Paciente> buscarPorEmail(String email){
-        return pacienteRepository.findByEmail(email);
+    public Paciente buscarPorEmail(String email) throws ResourceNotFoundException {
+        return pacienteRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado con email: " + email));
     }
 
     public void actualizar(Paciente paciente) {
         pacienteRepository.save(paciente);
     }
 
-    public boolean eliminar(Long id) {
-        Optional<Paciente> pacienteOpt = pacienteRepository.findById(id);
-        if (pacienteOpt.isPresent()) {
-            pacienteRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void eliminar(Long id) throws ResourceNotFoundException {
+        Paciente pacienteOpt = pacienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado con id: " + id));
+        pacienteRepository.deleteById(id);
     }
 
     public Paciente buscarGenerico(String parametro) throws ResourceNotFoundException {

@@ -50,13 +50,9 @@ public class OdontologoService{
         odontologoRepository.save(odontologo);
     }
 
-    public boolean eliminar(Long id) {
-        Optional<Odontologo> odontologoOpt= odontologoRepository.findById(id);
-        if(odontologoOpt.isPresent()){
-            odontologoRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void eliminar(Long id) throws ResourceNotFoundException {
+        Odontologo odontologoOpt= odontologoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado con id: " + id));
+        odontologoRepository.deleteById(id);
     }
 
     public Optional<Odontologo> buscarId(Long id) {
