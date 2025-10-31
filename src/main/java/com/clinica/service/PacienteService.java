@@ -52,13 +52,14 @@ public class PacienteService{
     }
 
     public boolean eliminar(Long id) {
-        Optional<Paciente> pacienteOpt= pacienteRepository.findById(id);
-        if(pacienteOpt.isPresent()){
+        Optional<Paciente> pacienteOpt = pacienteRepository.findById(id);
+        if (pacienteOpt.isPresent()) {
             pacienteRepository.deleteById(id);
             return true;
         }
         return false;
-        }
+    }
+
     public Paciente buscarGenerico(String parametro) throws ResourceNotFoundException {
         return pacienteRepository.findByNombre(parametro).orElseThrow(()
                 -> new ResourceNotFoundException("Paciente no encontrado con el nombre: " + parametro));
