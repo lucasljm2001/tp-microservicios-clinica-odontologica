@@ -1,12 +1,13 @@
 package com.clinica.controller;
 
 
-import com.clinica.DTO.OdontologoDTO;
-import com.clinica.DTO.PacienteDTO;
-import com.clinica.DTO.TurnoDTO;
+import com.clinica.dto.OdontologoDTO;
+import com.clinica.dto.PacienteDTO;
+import com.clinica.dto.TurnoDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.entity.Paciente;
 import com.clinica.entity.Turno;
+import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.service.OdontologoService;
 import com.clinica.service.PacienteService;
 import com.clinica.service.TurnoService;
@@ -31,27 +32,19 @@ public class TurnoController {
         this.turnoService = turnoService;
     }
     @PostMapping
-    public ResponseEntity<TurnoDTO> registrarTurno(@RequestBody Turno turno){
-        Optional<PacienteDTO> pacienteBuscado= pacienteService.buscarPacientePorId(turno.getPaciente().getId());
-        Optional<OdontologoDTO> odontologoBuscado= odontologoService.buscarOdontologoPorId(turno.getOdontologo().getId());
-        if(pacienteBuscado.isPresent()&& odontologoBuscado.isPresent()){
-            return ResponseEntity.ok(turnoService.guardarTurno(turno));
-        }else{
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<TurnoDTO> registrarTurno(@RequestBody Turno turno) throws ResourceNotFoundException {
+        PacienteDTO pacienteBuscado= pacienteService.buscarPacientePorId(turno.getPaciente().getId());
+        OdontologoDTO odontologoBuscado= odontologoService.buscarOdontologoPorId(turno.getOdontologo().getId());
+        return ResponseEntity.ok(turnoService.guardarTurno(turno));
     }
     @GetMapping
     public ResponseEntity<List<TurnoDTO>> obtenerTurnos(){
         return ResponseEntity.ok(turnoService.listarTurnos());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<TurnoDTO> obtenerTurnoPorId(@PathVariable Long id){
-        Optional<TurnoDTO> turnoBuscado= turnoService.buscarTurnoPorId(id);
-        if(turnoBuscado.isPresent()){
-            return ResponseEntity.ok(turnoBuscado.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<TurnoDTO> obtenerTurnoPorId(@PathVariable Long id) throws ResourceNotFoundException {
+        TurnoDTO turnoBuscado= turnoService.buscarTurnoPorId(id);
+        return ResponseEntity.ok(turnoBuscado);
     }
     @PutMapping
     public ResponseEntity<Turno> actualizarTurno(@RequestBody Turno turno){

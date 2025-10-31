@@ -13,5 +13,10 @@ public class GlobalException {
     public ResponseEntity<ExceptionDTO> tratamientoRNFE(ResourceNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(e.getMessage(), HttpStatus.NOT_FOUND.value()));
     }
+
+    @ExceptionHandler({ResourceExistingException.class})
+    public ResponseEntity<ExceptionDTO> resourceExisting(ResourceExistingException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
 }
 

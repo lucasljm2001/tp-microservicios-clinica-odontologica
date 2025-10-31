@@ -1,6 +1,6 @@
 package com.clinica.service;
 
-import com.clinica.DTO.PacienteDTO;
+import com.clinica.dto.PacienteDTO;
 import com.clinica.entity.Domicilio;
 import com.clinica.entity.Paciente;
 import com.clinica.exception.ResourceNotFoundException;
@@ -41,7 +41,7 @@ class PacienteTestService {
     @Test
     public void buscarPaciente() throws ResourceNotFoundException {
         //CUANDO
-        Optional<PacienteDTO> paciente= pacienteService.buscarPacientePorId(pacienteInicial.getId());
+        PacienteDTO paciente= pacienteService.buscarPacientePorId(pacienteInicial.getId());
         System.out.println("datos encontrados: "+paciente.toString());
         //ENTONCES
         Assertions.assertNotNull(paciente);
@@ -56,7 +56,7 @@ class PacienteTestService {
         //CUANDO
         PacienteDTO guardado = pacienteService.guardarPaciente(pacienteAGuardar);
 
-        Optional<PacienteDTO> pacienteBuscado= pacienteService.buscarPacientePorId(pacienteAGuardar.getId());
+        PacienteDTO pacienteBuscado= pacienteService.buscarPacientePorId(pacienteAGuardar.getId());
 
 
 
@@ -65,18 +65,18 @@ class PacienteTestService {
         Assertions.assertNotNull(pacienteBuscado);
         Assertions.assertEquals(
                 pacienteAGuardar.getNombre(),
-                pacienteBuscado.map(PacienteDTO::getNombre).orElse(null)
+                pacienteBuscado.getNombre()
         );
 
         Assertions.assertEquals(
                 pacienteAGuardar.getApellido(),
-                pacienteBuscado.map(PacienteDTO::getApellido).orElse(null)
+                pacienteBuscado.getApellido()
         );
 
     }
 
     @Test
-    public void eliminarPaciente(){
+    public void eliminarPaciente() throws ResourceNotFoundException {
         //DADO
         Domicilio domicilioTemp = domicilioRepository.save(new Domicilio("Main",1,"Springfield","AnyState"));
         Paciente nuevo= new Paciente("Temporal","Borrar",111111,java.time.LocalDate.now(),domicilioTemp,"temp@example.com");
@@ -84,11 +84,9 @@ class PacienteTestService {
 
         //CUANDO
         pacienteService.eliminar(nuevo.getId());
-        Optional<PacienteDTO> pacienteBuscado= pacienteService.buscarPacientePorId(nuevo.getId());
         //ENTONCES
-        Assertions.assertTrue(pacienteBuscado.isEmpty());
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-            pacienteService.buscar(nuevo.getId());
+            pacienteService.buscarPacientePorId(nuevo.getId());
         });
     }
 
@@ -97,14 +95,14 @@ class PacienteTestService {
         //DADO
         Paciente pacienteAActualizar= new Paciente(pacienteInicial.getId(),"Abraham","Simpson",123456,java.time.LocalDate.of(2025,10,10),domicilioInicial,"homero@gmail.com");
 
-        Assertions.assertEquals("Homero",pacienteService.buscarPacientePorId(pacienteInicial.getId()).map(PacienteDTO::getNombre).orElse(""));
+        Assertions.assertEquals("Homero",pacienteService.buscarPacientePorId(pacienteInicial.getId()).getNombre());
         //CUANDO
         pacienteService.actualizar(pacienteAActualizar);
 
-        Optional<PacienteDTO> pacienteBuscado= pacienteService.buscarPacientePorId(pacienteInicial.getId());
+        PacienteDTO pacienteBuscado= pacienteService.buscarPacientePorId(pacienteInicial.getId());
 
         //ENTONCES
-        Assertions.assertEquals("Abraham",pacienteBuscado.map(PacienteDTO::getNombre).orElse(""));
+        Assertions.assertEquals("Abraham",pacienteBuscado.getNombre());
 
     }
 
