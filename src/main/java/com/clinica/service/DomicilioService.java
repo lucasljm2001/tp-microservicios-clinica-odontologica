@@ -1,44 +1,38 @@
 package com.clinica.service;
 
 import com.clinica.entity.Domicilio;
+import com.clinica.entity.Odontologo;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.DomicilioRepository;
+import com.clinica.repository.OdontologoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
-public class DomicilioService implements  iService<Domicilio> {
+public class DomicilioService{
     private DomicilioRepository domicilioRepository;
 
-    public DomicilioService(DomicilioRepository domicilioRepository) {
-        this.domicilioRepository = domicilioRepository;
+    public Domicilio registrarDomicilio(Domicilio domicilio ){
+        return domicilioRepository.save(domicilio);
     }
 
-    @Override
-    public Domicilio guardar(Domicilio domicilio) {
-        return null;
+    public Optional<Domicilio> buscarPorId(Long id){
+        return domicilioRepository.findById(id);
     }
 
-    @Override
-    public Domicilio buscar(Long id) throws ResourceNotFoundException {
-        return domicilioRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Domicilio no encontrado con id: "+id));
-    }
-
-    @Override
     public void eliminar(Long id) {
 
     }
 
-    @Override
     public void actualizar(Domicilio domicilio) {
 
     }
 
-    @Override
     public Domicilio buscarGenerico(String parametro) {
         return null;
     }
 
-    @Override
     public java.util.List<Domicilio> buscarTodos() {
         return null;
     }

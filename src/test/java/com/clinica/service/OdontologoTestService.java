@@ -1,5 +1,6 @@
 package com.clinica.service;
 
+import com.clinica.DTO.OdontologoDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.OdontologoRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @SpringBootTest
@@ -26,14 +28,15 @@ class OdontologoTestService {
     @BeforeEach
     public void setup(){
         odontologoRepository.deleteAll();
-        doctorHibert = odontologoService.guardar(new Odontologo("Doctor","Hibert","12345"));
+        doctorHibert= new Odontologo("Doctor","Hibert","12345");
+        odontologoService.guardarOdontologo(doctorHibert);
     }
 
     @Test
     public void buscarOdontologo() throws ResourceNotFoundException {
         //DADO
         //CUANDO
-        Odontologo odontologo= odontologoService.buscar(doctorHibert.getId());
+        Optional<OdontologoDTO> odontologo= odontologoService.buscarOdontologoPorId(doctorHibert.getId());
         System.out.println("datos encontrados: "+odontologo.toString());
         //ENTONCES
         Assertions.assertNotNull(odontologo);
@@ -45,25 +48,35 @@ class OdontologoTestService {
         Odontologo odontologAGuardar= new Odontologo("Apu","Nahasapeemapetilon","67891234678");
 
         //CUANDO
-        Odontologo guardado = odontologoService.guardar(odontologAGuardar);
+        OdontologoDTO guardado = odontologoService.guardarOdontologo(odontologAGuardar);
 
-        Odontologo odontologoBuscado= odontologoService.buscarGenerico(odontologAGuardar.getNombre());
+        Optional<OdontologoDTO> odontologoBuscado= odontologoService.buscarOdontologoPorId(odontologAGuardar.getId());
 
         //ENTONCES
         Assertions.assertNotNull(guardado);
         Assertions.assertNotNull(odontologoBuscado);
-        Assertions.assertEquals(odontologAGuardar.getNombre(),odontologoBuscado.getNombre());
-        Assertions.assertEquals(odontologAGuardar.getApellido(),odontologoBuscado.getApellido());
+        Assertions.assertEquals(
+                odontologAGuardar.getNombre(),
+                odontologoBuscado.map(OdontologoDTO::getNombre).orElse(null)
+        );
+        Assertions.assertEquals(
+                odontologAGuardar.getApellido(),
+                odontologoBuscado.map(OdontologoDTO::getApellido).orElse(null)
+        );
 
     }
 
     @Test
     public void eliminarOdontologo(){
         //DADO
-        Odontologo nuevo = odontologoService.guardar(new Odontologo("Temporal","Borrar","99999"));
+        Odontologo nuevo = new Odontologo("Temporal","Borrar","99999");
+        odontologoService.guardarOdontologo(nuevo);
 
         //CUANDO
         odontologoService.eliminar(nuevo.getId());
+        Optional<OdontologoDTO> odontologoBuscado= odontologoService.buscarOdontologoPorId(nuevo.getId());
+        //ENTONCES
+        Assertions.assertTrue(odontologoBuscado.isEmpty());
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
                odontologoService.buscar(nuevo.getId());
         });
@@ -74,14 +87,14 @@ class OdontologoTestService {
         //DADO
         Odontologo odontologoAActualizar= new Odontologo(doctorHibert.getId(),"Apu","Nahasapeemapetilon","54321");
 
-        Assertions.assertEquals("Doctor",odontologoService.buscar(doctorHibert.getId()).getNombre());
+        Assertions.assertEquals("Doctor",odontologoService.buscarOdontologoPorId(doctorHibert.getId()).map(OdontologoDTO::getNombre).orElse(""));
         //CUANDO
         odontologoService.actualizar(odontologoAActualizar);
 
-        Odontologo odontologoBuscado= odontologoService.buscar(doctorHibert.getId());
+        Optional<OdontologoDTO> odontologoBuscado= odontologoService.buscarOdontologoPorId(doctorHibert.getId());
 
         //ENTONCES
-        Assertions.assertEquals("Apu",odontologoBuscado.getNombre());
+        Assertions.assertEquals("Apu",odontologoBuscado.map(OdontologoDTO::getNombre).orElse(""));
 
     }
 
@@ -89,25 +102,25 @@ class OdontologoTestService {
     public void buscarPorMatricula(){
         //DADO;
         //CUANDO
-        Odontologo odontologo= odontologoService.buscarGenerico(doctorHibert.getNombre());
+        Optional<Odontologo> odontologo= odontologoService.buscarPorMatricula(doctorHibert.getNombre());
         System.out.println("datos encontrados: "+odontologo.toString());
         //ENTONCES
         Assertions.assertNotNull(odontologo);
-        Assertions.assertEquals("Doctor",odontologo.getNombre());
+        Assertions.assertEquals("Doctor",odontologo.map(Odontologo::getNombre).orElse(""));
     }
 
 
     @Test
     public void buscarTodosLosPacientes(){
         //DADO
-        List<Odontologo> iniciales = odontologoService.buscarTodos();
+        List<OdontologoDTO> iniciales = odontologoService.listarOdontologos();
         int tamanioInicial = iniciales.size();
 
         Odontologo odontologAGuardar= new Odontologo("Apu","Nahasapeemapetilon","67890");
-        odontologoService.guardar(odontologAGuardar);
+        odontologoService.guardarOdontologo(odontologAGuardar);
 
         //CUANDO
-        List<Odontologo> odontologos= odontologoService.buscarTodos();
+        List<OdontologoDTO> odontologos= odontologoService.listarOdontologos();
         odontologos.forEach(odontologo -> System.out.println(odontologo.toString()));
         //ENTONCES
         Assertions.assertEquals(tamanioInicial + 1, odontologos.size());

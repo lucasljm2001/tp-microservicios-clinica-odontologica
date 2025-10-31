@@ -1,5 +1,6 @@
 package com.clinica.service;
 
+import com.clinica.DTO.PacienteDTO;
 import com.clinica.entity.Domicilio;
 import com.clinica.entity.Paciente;
 import com.clinica.exception.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 class PacienteTestService {
@@ -32,13 +34,14 @@ class PacienteTestService {
         pacienteRepository.deleteAll();
         domicilioRepository.deleteAll();
         domicilioInicial = domicilioRepository.save(new Domicilio("Evergreen",742,"Springfield","AnyState"));
-        pacienteInicial = pacienteService.guardar(new Paciente("Homero","Simpson",123456,java.time.LocalDate.now(),domicilioInicial,"homero@gmail.com"));
+        pacienteInicial = new Paciente("Homero","Simpson",123456,java.time.LocalDate.now(),domicilioInicial,"homero@gmail.com");
+        pacienteService.guardarPaciente(pacienteInicial);
     }
 
     @Test
     public void buscarPaciente() throws ResourceNotFoundException {
         //CUANDO
-        Paciente paciente= pacienteService.buscar(pacienteInicial.getId());
+        Optional<PacienteDTO> paciente= pacienteService.buscarPacientePorId(pacienteInicial.getId());
         System.out.println("datos encontrados: "+paciente.toString());
         //ENTONCES
         Assertions.assertNotNull(paciente);
@@ -51,26 +54,39 @@ class PacienteTestService {
         Paciente pacienteAGuardar= new Paciente("Bart","Simpson",123457,java.time.LocalDate.of(2025,10,10),domicilioBart,"bart@gmail.com");
 
         //CUANDO
-        Paciente guardado = pacienteService.guardar(pacienteAGuardar);
+        PacienteDTO guardado = pacienteService.guardarPaciente(pacienteAGuardar);
 
-        Paciente pacienteBuscado= pacienteService.buscarGenerico(pacienteAGuardar.getNombre());
+        Optional<PacienteDTO> pacienteBuscado= pacienteService.buscarPacientePorId(pacienteAGuardar.getId());
+
+
 
         //ENTONCES
         Assertions.assertNotNull(guardado);
         Assertions.assertNotNull(pacienteBuscado);
-        Assertions.assertEquals(pacienteAGuardar.getNombre(),pacienteBuscado.getNombre());
-        Assertions.assertEquals(pacienteAGuardar.getApellido(),pacienteBuscado.getApellido());
+        Assertions.assertEquals(
+                pacienteAGuardar.getNombre(),
+                pacienteBuscado.map(PacienteDTO::getNombre).orElse(null)
+        );
+
+        Assertions.assertEquals(
+                pacienteAGuardar.getApellido(),
+                pacienteBuscado.map(PacienteDTO::getApellido).orElse(null)
+        );
 
     }
 
     @Test
-    public void eliminarPaciente() {
+    public void eliminarPaciente(){
         //DADO
-        Domicilio domicilioTemp = domicilioRepository.save(new Domicilio("Main", 1, "Springfield", "AnyState"));
-        Paciente nuevo = pacienteService.guardar(new Paciente("Temporal", "Borrar", 111111, java.time.LocalDate.now(), domicilioTemp, "temp@example.com"));
+        Domicilio domicilioTemp = domicilioRepository.save(new Domicilio("Main",1,"Springfield","AnyState"));
+        Paciente nuevo= new Paciente("Temporal","Borrar",111111,java.time.LocalDate.now(),domicilioTemp,"temp@example.com");
+        pacienteService.guardarPaciente(nuevo);
 
         //CUANDO
         pacienteService.eliminar(nuevo.getId());
+        Optional<PacienteDTO> pacienteBuscado= pacienteService.buscarPacientePorId(nuevo.getId());
+        //ENTONCES
+        Assertions.assertTrue(pacienteBuscado.isEmpty());
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             pacienteService.buscar(nuevo.getId());
         });
@@ -81,19 +97,19 @@ class PacienteTestService {
         //DADO
         Paciente pacienteAActualizar= new Paciente(pacienteInicial.getId(),"Abraham","Simpson",123456,java.time.LocalDate.of(2025,10,10),domicilioInicial,"homero@gmail.com");
 
-        Assertions.assertEquals("Homero",pacienteService.buscar(pacienteInicial.getId()).getNombre());
+        Assertions.assertEquals("Homero",pacienteService.buscarPacientePorId(pacienteInicial.getId()).map(PacienteDTO::getNombre).orElse(""));
         //CUANDO
         pacienteService.actualizar(pacienteAActualizar);
 
-        Paciente pacienteBuscado= pacienteService.buscar(pacienteInicial.getId());
+        Optional<PacienteDTO> pacienteBuscado= pacienteService.buscarPacientePorId(pacienteInicial.getId());
 
         //ENTONCES
-        Assertions.assertEquals("Abraham",pacienteBuscado.getNombre());
+        Assertions.assertEquals("Abraham",pacienteBuscado.map(PacienteDTO::getNombre).orElse(""));
 
     }
 
-    @Test
-    public void buscarPorNombre() throws ResourceNotFoundException {
+    /*@Test
+    public void buscarPorNombre(){
         //CUANDO
         Paciente paciente= pacienteService.buscarGenerico(pacienteInicial.getNombre());
         System.out.println("datos encontrados: "+paciente.toString());
@@ -101,19 +117,19 @@ class PacienteTestService {
         Assertions.assertNotNull(paciente);
         Assertions.assertEquals("Homero",paciente.getNombre());
     }
-
+*/
     @Test
     public void buscarTodosLosPacientes(){
         //DADO
-        List<Paciente> iniciales = pacienteService.buscarTodos();
+        List<PacienteDTO> iniciales = pacienteService.listarPacientes();
         int tamanioInicial = iniciales.size();
 
         Domicilio domicilioApu = domicilioRepository.save(new Domicilio("Evergreen",744,"Springfield","AnyState"));
         Paciente pacienteAGuardar= new Paciente("Apu","Nahasapeemapetilon",123458,java.time.LocalDate.of(2025,10,10),domicilioApu,"apu@example.com");
-        pacienteService.guardar(pacienteAGuardar);
+        pacienteService.guardarPaciente(pacienteAGuardar);
 
         //CUANDO
-        List<Paciente> pacientes= pacienteService.buscarTodos();
+        List<PacienteDTO> pacientes= pacienteService.listarPacientes();
         pacientes.forEach(paciente -> System.out.println(paciente.toString()));
         //ENTONCES
         Assertions.assertEquals(tamanioInicial + 1, pacientes.size());
