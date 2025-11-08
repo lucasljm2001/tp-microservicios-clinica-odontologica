@@ -32,10 +32,10 @@ public class TurnoController {
         this.turnoService = turnoService;
     }
     @PostMapping
-    public ResponseEntity<TurnoDTO> registrarTurno(@RequestBody Turno turno) throws ResourceNotFoundException {
-        PacienteDTO pacienteBuscado= pacienteService.buscarPacientePorId(turno.getPaciente().getId());
-        OdontologoDTO odontologoBuscado= odontologoService.buscarOdontologoPorId(turno.getOdontologo().getId());
-        return ResponseEntity.ok(turnoService.guardarTurno(turno));
+    public ResponseEntity<TurnoDTO> registrarTurno(@RequestBody TurnoDTO turno) throws ResourceNotFoundException {
+        PacienteDTO pacienteBuscado= pacienteService.buscarPacientePorId(turno.getPacienteId());
+        OdontologoDTO odontologoBuscado= odontologoService.buscarOdontologoPorId(turno.getOdontologoId());
+        return ResponseEntity.ok(turnoService.guardarTurno(pacienteBuscado.getId(), odontologoBuscado.getId(), turno));
     }
     @GetMapping
     public ResponseEntity<List<TurnoDTO>> obtenerTurnos(){
@@ -47,9 +47,8 @@ public class TurnoController {
         return ResponseEntity.ok(turnoBuscado);
     }
     @PutMapping
-    public ResponseEntity<Turno> actualizarTurno(@RequestBody Turno turno){
-        turnoService.actualizar(turno);
-        return ResponseEntity.ok(turno);
+    public ResponseEntity<TurnoDTO> actualizarTurno(@RequestBody TurnoDTO turno){
+        return ResponseEntity.ok(turnoService.actualizar(turno));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarTurno(@PathVariable Long id){

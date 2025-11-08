@@ -8,29 +8,45 @@
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="index.html">Clinica</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav">
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link active" aria-current="page" href="index.html">Home</a>
                 </li>
-                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                       Gestion Pacientes
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="pacienteLista.html">Listar</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <a class="nav-link" href="pacienteLista.html">Pacientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="odontologoLista.html">Odontólogos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="turnoLista.html">Turnos</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<!-- Script para marcar el enlace activo en el navbar -->
+<script>
+  (function(){
+    const links = document.querySelectorAll('.navbar-nav .nav-link');
+    const path = window.location.pathname.split('/').pop();
+    links.forEach(a=>{
+      const href = a.getAttribute('href');
+      if ((href === path) || (href === 'index.html' && (path === '' || path === 'index.html'))) {
+        a.classList.add('active');
+        a.setAttribute('aria-current','page');
+      } else {
+        a.classList.remove('active');
+        a.removeAttribute('aria-current');
+      }
+    });
+  })();
+</script>
 </body>
 </html>

@@ -4,6 +4,7 @@ import com.clinica.dto.PacienteDTO;
 import com.clinica.entity.Domicilio;
 import com.clinica.entity.Paciente;
 import com.clinica.exception.ResourceNotFoundException;
+import com.clinica.exception.TurnoComprometidoException;
 import com.clinica.repository.DomicilioRepository;
 import com.clinica.repository.PacienteRepository;
 import org.junit.jupiter.api.Assertions;
@@ -76,7 +77,7 @@ class PacienteTestService {
     }
 
     @Test
-    public void eliminarPaciente() throws ResourceNotFoundException {
+    public void eliminarPaciente() throws ResourceNotFoundException, TurnoComprometidoException {
         //DADO
         Domicilio domicilioTemp = domicilioRepository.save(new Domicilio("Main",1,"Springfield","AnyState"));
         Paciente nuevo= new Paciente("Temporal","Borrar",111111,java.time.LocalDate.now(),domicilioTemp,"temp@example.com");

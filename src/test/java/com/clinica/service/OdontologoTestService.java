@@ -3,6 +3,7 @@ package com.clinica.service;
 import com.clinica.dto.OdontologoDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.exception.ResourceNotFoundException;
+import com.clinica.exception.TurnoComprometidoException;
 import com.clinica.repository.OdontologoRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +68,7 @@ class OdontologoTestService {
     }
 
     @Test
-    public void eliminarOdontologo() throws ResourceNotFoundException {
+    public void eliminarOdontologo() throws ResourceNotFoundException, TurnoComprometidoException {
         //DADO
         Odontologo nuevo = new Odontologo("Temporal","Borrar","99999");
         odontologoService.guardarOdontologo(nuevo);

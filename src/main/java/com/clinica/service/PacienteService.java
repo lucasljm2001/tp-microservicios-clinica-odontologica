@@ -3,7 +3,9 @@ package com.clinica.service;
 import com.clinica.dto.PacienteDTO;
 import com.clinica.entity.Paciente;
 import com.clinica.exception.ResourceNotFoundException;
+import com.clinica.exception.TurnoComprometidoException;
 import com.clinica.repository.PacienteRepository;
+import com.clinica.repository.TurnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.Optional;
 public class PacienteService{
     @Autowired
     private PacienteRepository pacienteRepository;
+    @Autowired
+    private TurnoRepository turnoRepository;
 
     public List<PacienteDTO> listarPacientes() {
         List<Paciente> pacientes= pacienteRepository.findAll();
@@ -30,7 +34,12 @@ public class PacienteService{
         pacienteDTO.setNombre(paciente.getNombre());
         pacienteDTO.setApellido(paciente.getApellido());
         pacienteDTO.setEmail(paciente.getEmail());
-        pacienteDTO.setDomicilioID(paciente.getDomicilio().getId());
+        // Evitar NPE si el paciente no tiene domicilio asociado
+        if (paciente.getDomicilio() != null) {
+            pacienteDTO.setDomicilioID(paciente.getDomicilio().getId());
+        } else {
+            pacienteDTO.setDomicilioID(null);
+        }
         pacienteDTO.setNumeroContacto(paciente.getNumeroContacto());
 
         return pacienteDTO;
@@ -47,8 +56,12 @@ public class PacienteService{
         pacienteRepository.save(paciente);
     }
 
-    public void eliminar(Long id) throws ResourceNotFoundException {
+    public void eliminar(Long id) throws ResourceNotFoundException, TurnoComprometidoException {
         Paciente pacienteOpt = pacienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado con id: " + id));
+        // Verificar si el paciente tiene turnos asociados antes de eliminar
+        if(turnoRepository.existsByPacienteId(id)){
+            throw new TurnoComprometidoException("No se puede eliminar el paciente con id " + id + " porque tiene turnos asociados.");
+        }
         pacienteRepository.deleteById(id);
     }
 
