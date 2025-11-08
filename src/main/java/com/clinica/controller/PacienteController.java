@@ -9,10 +9,12 @@ import com.clinica.entity.Paciente;
 import com.clinica.entity.Turno;
 import com.clinica.exception.PacienteExistenteException;
 import com.clinica.exception.ResourceNotFoundException;
+import com.clinica.exception.TurnoComprometidoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.clinica.service.PacienteService;
+import com.clinica.service.DomicilioService;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +24,12 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class PacienteController {
     private PacienteService pacienteService;
+    private DomicilioService domicilioService;
 
     @Autowired
-    public PacienteController(PacienteService pacienteService) {
+    public PacienteController(PacienteService pacienteService, DomicilioService domicilioService) {
         this.pacienteService = pacienteService;
+        this.domicilioService = domicilioService;
     }
     @GetMapping("/{id}")
     public ResponseEntity<PacienteDTO> buscarPorId(@PathVariable Long id) throws ResourceNotFoundException {
@@ -38,7 +42,7 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<PacienteDTO> registrarPaciente(@RequestBody PacienteDTO paciente) throws PacienteExistenteException{
+    public ResponseEntity<PacienteDTO> registrarPaciente(@RequestBody PacienteDTO paciente) throws PacienteExistenteException, ResourceNotFoundException{
         // Buscar por email en lugar de id, ya que el id aún no existe
         try {
             Paciente pacienteExistente = pacienteService.buscarPorEmail(paciente.getEmail());
@@ -49,7 +53,15 @@ public class PacienteController {
             nuevoPaciente.setApellido(paciente.getApellido());
             nuevoPaciente.setEmail(paciente.getEmail());
             nuevoPaciente.setNumeroContacto(paciente.getNumeroContacto());
-            // Aquí deberías asignar el domicilio si es necesario
+            // Asociar domicilio existente si se proporcionó domicilioID
+            if (paciente.getDomicilioID() != null) {
+                var domOpt = domicilioService.buscarPorId(paciente.getDomicilioID());
+                if (domOpt.isPresent()) {
+                    nuevoPaciente.setDomicilio(domOpt.get());
+                } else {
+                    throw new ResourceNotFoundException("Domicilio no encontrado con id: " + paciente.getDomicilioID());
+                }
+            }
             PacienteDTO guardado = pacienteService.guardarPaciente(nuevoPaciente);
             return ResponseEntity.ok(guardado);
         }
@@ -63,7 +75,7 @@ public class PacienteController {
         return ResponseEntity.ok(paciente);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarPaciente(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<String> eliminarPaciente(@PathVariable Long id) throws ResourceNotFoundException, TurnoComprometidoException {
         pacienteService.eliminar(id);
         return ResponseEntity.ok("Paciente eliminado");
     }

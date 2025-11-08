@@ -2,6 +2,7 @@ package com.clinica.controller;
 import com.clinica.entity.Odontologo;
 import com.clinica.exception.OdontologoExistenteException;
 import com.clinica.exception.ResourceNotFoundException;
+import com.clinica.exception.TurnoComprometidoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,7 +68,7 @@ public class OdontologoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarOdontologo(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<String> eliminarOdontologo(@PathVariable Long id) throws ResourceNotFoundException, TurnoComprometidoException {
         odontologoService.eliminar(id);
         return ResponseEntity.ok("Odontologo eliminado");
     }

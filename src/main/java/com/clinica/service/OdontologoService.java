@@ -3,10 +3,13 @@ package com.clinica.service;
 import com.clinica.dto.OdontologoDTO;
 import com.clinica.dto.PacienteDTO;
 import com.clinica.entity.Odontologo;
+import com.clinica.entity.Turno;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.entity.Paciente;
+import com.clinica.exception.TurnoComprometidoException;
 import com.clinica.repository.OdontologoRepository;
 import com.clinica.repository.PacienteRepository;
+import com.clinica.repository.TurnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ import java.util.Optional;
 public class OdontologoService{
     @Autowired
     private OdontologoRepository odontologoRepository;
+    @Autowired
+    private TurnoRepository turnoRepository;
 
     public List<OdontologoDTO> listarOdontologos() {
         List<Odontologo> odontologos= odontologoRepository.findAll();
@@ -50,8 +55,12 @@ public class OdontologoService{
         odontologoRepository.save(odontologo);
     }
 
-    public void eliminar(Long id) throws ResourceNotFoundException {
+    public void eliminar(Long id) throws ResourceNotFoundException, TurnoComprometidoException {
         Odontologo odontologoOpt= odontologoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado con id: " + id));
+        // Verificar si el odontólogo tiene turnos asociados antes de eliminar
+        if(turnoRepository.existsByOdontologoId(id)){
+            throw new TurnoComprometidoException("No se puede eliminar el odontólogo con id " + id + " porque tiene turnos asociados.");
+        }
         odontologoRepository.deleteById(id);
     }
 

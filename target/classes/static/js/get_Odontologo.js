@@ -181,8 +181,9 @@ function loadAllOdontologos(){
         })
 }
 function searchByName(name) {
-    const url = 'http://localhost:8080/odontologo/buscar?nombre=' + encodeURIComponent(name);
+    const url = 'http://localhost:8080/odontologo/buscar?matricula=' + name;
     const settings = { method: 'GET' };
+    console.log(url)
 
     fetch(url, settings)
         .then(response => response.json())

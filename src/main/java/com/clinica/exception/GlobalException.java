@@ -18,5 +18,10 @@ public class GlobalException {
     public ResponseEntity<ExceptionDTO> resourceExisting(ResourceExistingException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
+
+    @ExceptionHandler({TurnoComprometidoException.class})
+    public ResponseEntity<ExceptionDTO> turnoComprometidoException(TurnoComprometidoException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
 }
 

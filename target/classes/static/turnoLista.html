@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Lista de Odontologos</title>
+    <title>Lista de Turnos</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <!-- Usar sólo Bootstrap 5 (sin jQuery) para evitar conflictos -->
-    <script type="text/javascript" src="js/get_Odontologo.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/get_Turno.js"></script>
 </head>
 <body>
 <div class="container">
@@ -25,90 +27,83 @@
                         <a class="nav-link" href="pacienteLista.html">Pacientes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="odontologoLista.html">Odontólogos</a>
+                        <a class="nav-link" href="odontologoLista.html">Odontólogos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="turnoLista.html">Turnos</a>
+                        <a class="nav-link active" aria-current="page" href="turnoLista.html">Turnos</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div id="div_odontologo_table">
-        <h1>Lista de Odontologos <button id="btn_add" class="btn btn-success btn-sm" title="Agregar Odontologo" >+</button></h1>
+    <div id="div_turno_table">
+        <h1>Lista de Turnos <button id="btn_add" class="btn btn-success btn-sm" title="Agregar Turno" >+</button></h1>
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="input-group">
-                    <input type="text" id="search_nombre" class="form-control" placeholder="Buscar por matricula" aria-label="Buscar por matricula">
+                    <input type="text" id="search_nombre" class="form-control" placeholder="Buscar por paciente" aria-label="Buscar por paciente">
                     <button class="btn btn-outline-secondary" type="button" id="btn_search">Buscar</button>
                     <button class="btn btn-outline-secondary" type="button" id="btn_search_clear">Limpiar</button>
                 </div>
             </div>
         </div>
-        <div class="row col-md-6 table-responsive">
-            <table id="odontologoTable" class="table table-striped">
+        <div class="row col-md-10 table-responsive">
+            <table id="turnoTable" class="table table-striped">
                 <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Matricula</th>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>Odontologo</th>
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id="odontologoTableBody">
+                <tbody id="turnoTableBody">
 
                 </tbody>
             </table>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6" style="display: none;
-                                            background-color:#e6fffa; padding:10px; border-radius:3px"
-             id="div_odontologo_updating">
-            <form id="update_odontologo_form">
+        <div class="col-sm-6" style="display: none; background-color:#e6fffa; padding:10px; border-radius:3px" id="div_turno_updating">
+            <form id="update_turno_form">
                 <div class="form-group">
                     <label>Id:</label>
-                    <input type="text" class="form-control" id="odontologo_id" readonly>
+                    <input type="text" class="form-control" id="turno_id" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Nombre:</label>
-                    <input type="text" class="form-control" placeholder="nombre" id="nombre" required>
+                    <label>Fecha y hora:</label>
+                    <input type="date" class="form-control" id="fechaHora" required>
+                </div>
+
+                <h5>Paciente</h5>
+                <div class="form-group">
+                    <label>Id Paciente:</label>
+                    <input type="number" class="form-control" id="paciente_id" placeholder="Id del paciente" required>
                 </div>
                 <div class="form-group">
-                    <label>Apellido:</label>
-                    <input type="text" class="form-control" placeholder="apellido" id="apellido" required>
+                    <label>Nombre Paciente (opcional):</label>
+                    <input type="text" class="form-control" id="paciente_nombre" readonly>
+                </div>
+
+                <h5>Odontólogo</h5>
+                <div class="form-group">
+                    <label>Id Odontologo:</label>
+                    <input type="number" class="form-control" id="odontologo_id" placeholder="Id del odontologo" required>
                 </div>
                 <div class="form-group">
-                    <label>Matricula:</label>
-                    <input type="text" class="form-control" placeholder="matricula" id="matricula" required>
+                    <label>Nombre Odontologo (opcional):</label>
+                    <input type="text" class="form-control" id="odontologo_nombre" readonly>
                 </div>
+
                 <button type="submit" class="btn btn-primary">Modificar</button>
             </form>
-            <div id="response" style="display:none; margin:10px">
-            </div>
+            <div id="response" style="display:none; margin:10px"></div>
         </div>
     </div>
     <hr>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-<!-- Script para marcar el enlace activo en el navbar -->
-<script>
-  (function(){
-    const links = document.querySelectorAll('.navbar-nav .nav-link');
-    const path = window.location.pathname.split('/').pop();
-    links.forEach(a=>{
-      const href = a.getAttribute('href');
-      if ((href === path) || (href === 'index.html' && (path === '' || path === 'index.html'))) {
-        a.classList.add('active');
-        a.setAttribute('aria-current','page');
-      } else {
-        a.classList.remove('active');
-        a.removeAttribute('aria-current');
-      }
-    });
-  })();
-</script>
 </body>
 </html>
