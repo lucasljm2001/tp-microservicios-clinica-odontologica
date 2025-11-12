@@ -20,6 +20,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/turnos")
+@CrossOrigin(origins = "*")
+
 public class TurnoController {
     private OdontologoService odontologoService;
     private PacienteService pacienteService;
@@ -47,7 +49,7 @@ public class TurnoController {
         return ResponseEntity.ok(turnoBuscado);
     }
     @PutMapping
-    public ResponseEntity<TurnoDTO> actualizarTurno(@RequestBody TurnoDTO turno){
+    public ResponseEntity<TurnoDTO> actualizarTurno(@RequestBody TurnoDTO turno) throws ResourceNotFoundException {
         return ResponseEntity.ok(turnoService.actualizar(turno));
     }
     @DeleteMapping("/{id}")

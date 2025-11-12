@@ -15,6 +15,7 @@ import java.util.Optional;
 
 
 
+
 @RestController
 @RequestMapping("/odontologo") //todo lo que venga con endpoint pacinete
 @CrossOrigin(origins = "*")
@@ -32,8 +33,10 @@ public class OdontologoController {
     @PutMapping
     public ResponseEntity<OdontologoDTO> actualizarOdontologo(@RequestBody OdontologoDTO odontologo) throws ResourceNotFoundException {
        Odontologo odontologObtenido = odontologoService.buscarPorMatricula(odontologo.getMatricula());
-       odontologoService.actualizar(odontologObtenido);
-       return ResponseEntity.ok(odontologo);
+       odontologObtenido.setNombre(odontologo.getNombre());
+       odontologObtenido.setApellido(odontologo.getApellido());
+       OdontologoDTO actualizado = odontologoService.actualizar(odontologObtenido);
+       return ResponseEntity.ok(actualizado);
     }
 
     @GetMapping("/buscar")
@@ -74,4 +77,3 @@ public class OdontologoController {
     }
 
 }
-

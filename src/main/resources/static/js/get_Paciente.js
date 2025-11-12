@@ -83,9 +83,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const apellido = document.getElementById('apellido').value;
         const numeroContacto = document.getElementById('numeroContacto').value ? parseInt(document.getElementById('numeroContacto').value) : null;
         const fechaIngreso = document.getElementById('fechaIngreso').value || null;
-        const domicilio_id = document.getElementById('domicilio_id').value || null;
         const domicilio = {
-            id: domicilio_id ? parseInt(domicilio_id) : null,
             calle: document.getElementById('domicilio_calle').value || null,
             numero: document.getElementById('domicilio_numero').value ? parseInt(document.getElementById('domicilio_numero').value) : null,
             localidad: document.getElementById('domicilio_localidad').value || null,
