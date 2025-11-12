@@ -7,6 +7,8 @@ import com.clinica.dto.PacienteDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.entity.Paciente;
 import com.clinica.entity.Turno;
+import com.clinica.entity.Domicilio;
+import com.clinica.dto.DomicilioDTO;
 import com.clinica.exception.PacienteExistenteException;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.exception.TurnoComprometidoException;
@@ -53,13 +55,24 @@ public class PacienteController {
             nuevoPaciente.setApellido(paciente.getApellido());
             nuevoPaciente.setEmail(paciente.getEmail());
             nuevoPaciente.setNumeroContacto(paciente.getNumeroContacto());
-            // Asociar domicilio existente si se proporcionó domicilioID
-            if (paciente.getDomicilioID() != null) {
-                var domOpt = domicilioService.buscarPorId(paciente.getDomicilioID());
-                if (domOpt.isPresent()) {
-                    nuevoPaciente.setDomicilio(domOpt.get());
+            // Asociar domicilio: si se envía domicilio en el DTO, crear o reutilizar
+            if (paciente.getDomicilio() != null) {
+                DomicilioDTO domDto = paciente.getDomicilio();
+                if (domDto.getId() != null) {
+                    var domOpt = domicilioService.buscarPorId(domDto.getId());
+                    if (domOpt.isPresent()) {
+                        nuevoPaciente.setDomicilio(domOpt.get());
+                    } else {
+                        // id provisto pero no existe: crear nuevo con los datos recibidos
+                        Domicilio nuevoDom = new Domicilio(domDto.getCalle(), domDto.getNumero(), domDto.getLocalidad(), domDto.getProvincia());
+                        Domicilio domGuardado = domicilioService.registrarDomicilio(nuevoDom);
+                        nuevoPaciente.setDomicilio(domGuardado);
+                    }
                 } else {
-                    throw new ResourceNotFoundException("Domicilio no encontrado con id: " + paciente.getDomicilioID());
+                    // sin id: crear domicilio nuevo con los datos del DTO
+                    Domicilio nuevoDom = new Domicilio(domDto.getCalle(), domDto.getNumero(), domDto.getLocalidad(), domDto.getProvincia());
+                    Domicilio domGuardado = domicilioService.registrarDomicilio(nuevoDom);
+                    nuevoPaciente.setDomicilio(domGuardado);
                 }
             }
             PacienteDTO guardado = pacienteService.guardarPaciente(nuevoPaciente);
@@ -70,9 +83,37 @@ public class PacienteController {
 
 
     @PutMapping
-    public ResponseEntity<Paciente> actualizarPaciente(@RequestBody Paciente paciente){
-        pacienteService.actualizar(paciente);
-        return ResponseEntity.ok(paciente);
+    public ResponseEntity<PacienteDTO> actualizarPaciente(@RequestBody PacienteDTO pacienteDto) throws ResourceNotFoundException {
+        // Buscar paciente existente por id
+        if (pacienteDto.getId() == null) {
+            throw new ResourceNotFoundException("Debe proveer el id del paciente a actualizar");
+        }
+        Paciente pacienteExistente = pacienteService.buscarId(pacienteDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado con id: " + pacienteDto.getId()));
+        // Aplicar cambios simples
+        pacienteExistente.setNombre(pacienteDto.getNombre());
+        pacienteExistente.setApellido(pacienteDto.getApellido());
+        pacienteExistente.setEmail(pacienteDto.getEmail());
+        pacienteExistente.setNumeroContacto(pacienteDto.getNumeroContacto());
+        // Manejar domicilio: crear si no existe o asignar existente
+        if (pacienteDto.getDomicilio() != null) {
+            DomicilioDTO domDto = pacienteDto.getDomicilio();
+            if (domDto.getId() != null) {
+                var domOpt = domicilioService.buscarPorId(domDto.getId());
+                if (domOpt.isPresent()) {
+                    pacienteExistente.setDomicilio(domOpt.get());
+                } else {
+                    Domicilio nuevoDom = new Domicilio(domDto.getCalle(), domDto.getNumero(), domDto.getLocalidad(), domDto.getProvincia());
+                    Domicilio domGuardado = domicilioService.registrarDomicilio(nuevoDom);
+                    pacienteExistente.setDomicilio(domGuardado);
+                }
+            } else {
+                Domicilio nuevoDom = new Domicilio(domDto.getCalle(), domDto.getNumero(), domDto.getLocalidad(), domDto.getProvincia());
+                Domicilio domGuardado = domicilioService.registrarDomicilio(nuevoDom);
+                pacienteExistente.setDomicilio(domGuardado);
+            }
+        }
+        PacienteDTO actualizado = pacienteService.actualizar(pacienteExistente);
+        return ResponseEntity.ok(actualizado);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarPaciente(@PathVariable Long id) throws ResourceNotFoundException, TurnoComprometidoException {

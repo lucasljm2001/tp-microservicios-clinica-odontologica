@@ -1,6 +1,7 @@
 package com.clinica.service;
 
 import com.clinica.dto.PacienteDTO;
+import com.clinica.dto.DomicilioDTO;
 import com.clinica.entity.Paciente;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.exception.TurnoComprometidoException;
@@ -36,9 +37,15 @@ public class PacienteService{
         pacienteDTO.setEmail(paciente.getEmail());
         // Evitar NPE si el paciente no tiene domicilio asociado
         if (paciente.getDomicilio() != null) {
-            pacienteDTO.setDomicilioID(paciente.getDomicilio().getId());
+            DomicilioDTO domDto = new DomicilioDTO();
+            domDto.setId(paciente.getDomicilio().getId());
+            domDto.setCalle(paciente.getDomicilio().getCalle());
+            domDto.setNumero(paciente.getDomicilio().getNumero());
+            domDto.setLocalidad(paciente.getDomicilio().getLocalidad());
+            domDto.setProvincia(paciente.getDomicilio().getProvincia());
+            pacienteDTO.setDomicilio(domDto);
         } else {
-            pacienteDTO.setDomicilioID(null);
+            pacienteDTO.setDomicilio(null);
         }
         pacienteDTO.setNumeroContacto(paciente.getNumeroContacto());
 
@@ -52,8 +59,9 @@ public class PacienteService{
         return pacienteRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado con email: " + email));
     }
 
-    public void actualizar(Paciente paciente) {
-        pacienteRepository.save(paciente);
+    public PacienteDTO actualizar(Paciente paciente) {
+        Paciente pacienteGuardado = pacienteRepository.save(paciente);
+        return pacienteAPacienteDTO(pacienteGuardado);
     }
 
     public void eliminar(Long id) throws ResourceNotFoundException, TurnoComprometidoException {

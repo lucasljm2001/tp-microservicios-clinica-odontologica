@@ -73,10 +73,13 @@ public class TurnoService {
         return turnoATurnoDTO(turnoBuscado);
     }
 
-    public TurnoDTO actualizar(TurnoDTO turno) {
-        Turno turnoEntity= turnoRepository.getReferenceById(turno.getId());
-        Odontologo odontologo = odontologoRepository.getReferenceById(turno.getOdontologoId());
-        Paciente paciente = pacienteRepository.getReferenceById(turno.getPacienteId());
+    public TurnoDTO actualizar(TurnoDTO turno) throws ResourceNotFoundException {
+        if(turno.getId() == null){
+            throw new ResourceNotFoundException("El id del turno es obligatorio para actualizar");
+        }
+        Turno turnoEntity= turnoRepository.findById(turno.getId()).orElseThrow(() -> new ResourceNotFoundException("Turno no encontrado con id: " + turno.getId()));
+        Odontologo odontologo = odontologoRepository.findById(turno.getOdontologoId()).orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado con id: " + turno.getOdontologoId()));
+        Paciente paciente = pacienteRepository.findById(turno.getPacienteId()).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado con id: " + turno.getPacienteId()));
         Turno updatedTurno= new Turno();
         updatedTurno.setId(turnoEntity.getId());
         updatedTurno.setFecha(turno.getFecha());

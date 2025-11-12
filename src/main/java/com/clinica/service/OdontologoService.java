@@ -51,8 +51,9 @@ public class OdontologoService{
         return odontologoRepository.findByMatricula(matricula).orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado con matricula: " + matricula));
     }
 
-    public void actualizar(Odontologo odontologo) {
-        odontologoRepository.save(odontologo);
+    public OdontologoDTO actualizar(Odontologo odontologo) {
+        Odontologo odontologoGuardado = odontologoRepository.save(odontologo);
+        return OdontologoAOdontologoDTO(odontologoGuardado);
     }
 
     public void eliminar(Long id) throws ResourceNotFoundException, TurnoComprometidoException {

@@ -1,0 +1,251 @@
+{
+	"info": {
+		"_postman_id": "29a2fcce-8453-4f8b-84ed-811f20788ad5",
+		"name": "tp-clinica",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16896121"
+	},
+	"item": [
+		{
+			"name": "odontologo",
+			"item": [
+				{
+					"name": "crear odontologo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"juan\",\n    \"apellido\": \"perez\",\n    \"matricula\": \"1234567\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/odontologo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"odontologo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listar odontologos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"juan\",\n    \"apellido\": \"perez\",\n    \"matricula\": \"1234567\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/odontologo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"odontologo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buscar odontologo por matricula",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/odontologo/buscar?matricula=1234567",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"odontologo",
+								"buscar"
+							],
+							"query": [
+								{
+									"key": "matricula",
+									"value": "1234567"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "crear turno",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/odontologo/turnos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"odontologo",
+								"turnos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "paciente",
+			"item": [
+				{
+					"name": "registrar paciente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"homero\",\n    \"apellido\": \"simpson\",\n    \"fechaIngreso\": \"2025-07-08\",\n    \"numeroContacto\": 12345,\n    \"domicilio\": {\n        \"calle\": \"siempreviva\",\n        \"numero\": 123,\n        \"localidad\": \"springfield\",\n        \"provincia\": \"florida\"\n    },\n    \"email\": \"homero@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/paciente",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"paciente"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listar pacientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/paciente",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"paciente"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buscar por id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/paciente/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"paciente",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "turno",
+			"item": [
+				{
+					"name": "registrar turno",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fecha\": \"2026-04-24\",\n    \"pacienteId\": 1,\n    \"odontologoId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/turnos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"turnos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "obtener turnos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/turnos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"turnos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
