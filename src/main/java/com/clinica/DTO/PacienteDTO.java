@@ -13,7 +13,7 @@ public class PacienteDTO {
     private String apellido;
     private LocalDate fechaIngreso;
     private Integer numeroContacto;
-    private Long domicilioID;
+    private DomicilioDTO domicilio;
     private String email;
 
     public Long getId() {
@@ -56,12 +56,12 @@ public class PacienteDTO {
         this.numeroContacto = numeroContacto;
     }
 
-    public Long getDomicilioID() {
-        return domicilioID;
+    public DomicilioDTO getDomicilio() {
+        return domicilio;
     }
 
-    public void setDomicilioID(Long domicilioID) {
-        this.domicilioID = domicilioID;
+    public void setDomicilio(DomicilioDTO domicilio) {
+        this.domicilio = domicilio;
     }
 
     public String getEmail() {
