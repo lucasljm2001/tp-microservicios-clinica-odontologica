@@ -2,9 +2,11 @@ package com.clinica.service;
 
 import com.clinica.dto.PacienteDTO;
 import com.clinica.dto.DomicilioDTO;
+import com.clinica.entity.Domicilio;
 import com.clinica.entity.Paciente;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.exception.TurnoComprometidoException;
+import com.clinica.repository.DomicilioRepository;
 import com.clinica.repository.PacienteRepository;
 import com.clinica.repository.TurnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,20 @@ public class PacienteService{
     @Autowired
     private TurnoRepository turnoRepository;
 
+    @Autowired
+    private DomicilioRepository domicilioRepository;
+
     public List<PacienteDTO> listarPacientes() {
         List<Paciente> pacientes= pacienteRepository.findAll();
         return pacientes.stream().map(this::pacienteAPacienteDTO).toList();
     }
 
     public PacienteDTO guardarPaciente(Paciente paciente){
+        Domicilio domicilio = paciente.getDomicilio();
+
+        if (domicilio != null && domicilio.getId() == null) {
+            domicilioRepository.save(domicilio);
+        }
         Paciente pacienteGuardado= pacienteRepository.save(paciente);
         return pacienteAPacienteDTO(pacienteGuardado);
     }
@@ -35,7 +45,6 @@ public class PacienteService{
         pacienteDTO.setNombre(paciente.getNombre());
         pacienteDTO.setApellido(paciente.getApellido());
         pacienteDTO.setEmail(paciente.getEmail());
-        // Evitar NPE si el paciente no tiene domicilio asociado
         if (paciente.getDomicilio() != null) {
             DomicilioDTO domDto = new DomicilioDTO();
             domDto.setId(paciente.getDomicilio().getId());
@@ -48,6 +57,7 @@ public class PacienteService{
             pacienteDTO.setDomicilio(null);
         }
         pacienteDTO.setNumeroContacto(paciente.getNumeroContacto());
+        pacienteDTO.setFechaIngreso(paciente.getFechaIngreso());
 
         return pacienteDTO;
     }
@@ -66,7 +76,6 @@ public class PacienteService{
 
     public void eliminar(Long id) throws ResourceNotFoundException, TurnoComprometidoException {
         Paciente pacienteOpt = pacienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado con id: " + id));
-        // Verificar si el paciente tiene turnos asociados antes de eliminar
         if(turnoRepository.existsByPacienteId(id)){
             throw new TurnoComprometidoException("No se puede eliminar el paciente con id " + id + " porque tiene turnos asociados.");
         }
