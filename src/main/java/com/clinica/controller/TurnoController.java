@@ -4,9 +4,6 @@ package com.clinica.controller;
 import com.clinica.dto.OdontologoDTO;
 import com.clinica.dto.PacienteDTO;
 import com.clinica.dto.TurnoDTO;
-import com.clinica.entity.Odontologo;
-import com.clinica.entity.Paciente;
-import com.clinica.entity.Turno;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.service.OdontologoService;
 import com.clinica.service.PacienteService;
@@ -16,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/turnos")

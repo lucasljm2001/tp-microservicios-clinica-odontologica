@@ -21,10 +21,8 @@ window.findBy = function(id){
         })
         .then(paciente => {
             console.log('Paciente obtenido:', paciente);
-            // si existe el formulario de edición, mostrarlo y llenarlo (mapear campos existentes)
             const updateDiv = document.getElementById('div_paciente_updating');
             if (updateDiv){
-                // campos del formulario acorde al JSON: paciente_id, nombre, apellido, numeroContacto, fechaIngreso, domicilio_*, email
                 const inputId = document.getElementById('paciente_id');
                 const inputNombre = document.getElementById('nombre');
                 const inputApellido = document.getElementById('apellido');
@@ -40,7 +38,21 @@ window.findBy = function(id){
                 if (inputNombre) inputNombre.value = paciente.nombre || '';
                 if (inputApellido) inputApellido.value = paciente.apellido || '';
                 if (inputNumero) inputNumero.value = paciente.numeroContacto || '';
-                if (inputFecha) inputFecha.value = paciente.fechaIngreso || '';
+                if (inputFecha) {
+                    if (paciente.fechaIngreso) {
+                        const d = new Date(paciente.fechaIngreso);
+                        if (!isNaN(d)) {
+                            const yyyy = d.getFullYear();
+                            const mm = String(d.getMonth() + 1).padStart(2, '0');
+                            const dd = String(d.getDate()).padStart(2, '0');
+                            inputFecha.value = `${yyyy}-${mm}-${dd}`;
+                        } else {
+                            inputFecha.value = (typeof paciente.fechaIngreso === 'string' && paciente.fechaIngreso.length >= 10) ? paciente.fechaIngreso.substring(0, 10) : paciente.fechaIngreso;
+                        }
+                    } else {
+                        inputFecha.value = '';
+                    }
+                }
                 if (domId) domId.value = (paciente.domicilio && paciente.domicilio.id) ? paciente.domicilio.id : '';
                 if (domCalle) domCalle.value = (paciente.domicilio && paciente.domicilio.calle) ? paciente.domicilio.calle : '';
                 if (domNumero) domNumero.value = (paciente.domicilio && paciente.domicilio.numero) ? paciente.domicilio.numero : '';
@@ -48,7 +60,6 @@ window.findBy = function(id){
                 if (domProvincia) domProvincia.value = (paciente.domicilio && paciente.domicilio.provincia) ? paciente.domicilio.provincia : '';
                 if (inputEmail) inputEmail.value = paciente.email || '';
                 updateDiv.style.display = 'block';
-                // foco en el primer campo
                 if (inputNombre) inputNombre.focus();
             } else {
                 alert(JSON.stringify(paciente, null, 2));
@@ -60,7 +71,6 @@ window.findBy = function(id){
         });
 }
 
-// renderiza la fila de un paciente (alineado con la tabla)
 function renderPacienteRowInnerHTML(paciente){
     const updateButton = '<button id="btn_id_' + paciente.id + '" type="button" onclick="findBy('+paciente.id+')" class="btn btn-info btn_id">' + paciente.id + '</button>';
     const deleteButton = '<button id="btn_delete_' + paciente.id + '" type="button" onclick="deleteBy('+paciente.id+')" class="btn btn-danger btn_delete">&times</button>';
@@ -70,7 +80,6 @@ function renderPacienteRowInnerHTML(paciente){
         '<td>' + deleteButton + '</td>';
 }
 
-// handler del formulario de actualización
 document.addEventListener('DOMContentLoaded', function(){
     const form = document.getElementById('update_paciente_form');
     if (!form) return;
@@ -101,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function(){
             email: email
         };
 
-        // elegir método según si existe id (PUT para actualizar, POST para crear)
         const isUpdate = id ? true : false;
         const method = isUpdate ? 'PUT' : 'POST';
         fetch('http://localhost:8080/paciente', {
@@ -113,17 +121,13 @@ document.addEventListener('DOMContentLoaded', function(){
             return res.json();
         }).then(resultPaciente => {
             if (isUpdate) {
-                // actualizar fila existente
                 const row = document.getElementById('tr_' + resultPaciente.id);
                 if (row) row.innerHTML = renderPacienteRowInnerHTML(resultPaciente);
             } else {
-                // nueva creación -> añadir fila
                 loadAllPatients()
             }
-            // ocultar y limpiar formulario
             const updateDiv = document.getElementById('div_paciente_updating');
             if (updateDiv) updateDiv.style.display = 'none';
-            // restablecer texto del botón submit
             const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) submitBtn.textContent = 'Modificar';
         }).catch(err => {

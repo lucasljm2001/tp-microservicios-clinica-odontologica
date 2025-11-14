@@ -5,6 +5,7 @@ import com.clinica.entity.Odontologo;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.exception.TurnoComprometidoException;
 import com.clinica.repository.OdontologoRepository;
+import com.clinica.repository.TurnoRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,10 +25,14 @@ class OdontologoTestService {
     @Autowired
     OdontologoRepository odontologoRepository;
 
+    @Autowired
+    TurnoRepository turnoRepository;
+
     Odontologo doctorHibert;
 
     @BeforeEach
     public void setup(){
+        turnoRepository.deleteAll();
         odontologoRepository.deleteAll();
         doctorHibert= new Odontologo("Doctor","Hibert","12345");
         odontologoService.guardarOdontologo(doctorHibert);

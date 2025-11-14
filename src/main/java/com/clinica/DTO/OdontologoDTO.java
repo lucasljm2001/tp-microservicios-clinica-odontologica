@@ -37,4 +37,13 @@ public class OdontologoDTO {
     public void setMatricula(String matricula) {
         this.matricula = matricula;
     }
+
+    public OdontologoDTO(String nombre, String apellido, String matricula) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.matricula = matricula;
+    }
+
+    public OdontologoDTO() {
+    }
 }

@@ -1,14 +1,10 @@
 package com.clinica.service;
 
 import com.clinica.dto.OdontologoDTO;
-import com.clinica.dto.PacienteDTO;
 import com.clinica.entity.Odontologo;
-import com.clinica.entity.Turno;
 import com.clinica.exception.ResourceNotFoundException;
-import com.clinica.entity.Paciente;
 import com.clinica.exception.TurnoComprometidoException;
 import com.clinica.repository.OdontologoRepository;
-import com.clinica.repository.PacienteRepository;
 import com.clinica.repository.TurnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

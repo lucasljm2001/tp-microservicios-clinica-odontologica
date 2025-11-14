@@ -20,7 +20,6 @@ import java.util.Optional;
 @RequestMapping("/odontologo") //todo lo que venga con endpoint pacinete
 @CrossOrigin(origins = "*")
 public class OdontologoController {
-    //Quien representa el modelo DAO?
     @Autowired
     private OdontologoService odontologoService;
 
@@ -52,7 +51,6 @@ public class OdontologoController {
     }
     @PostMapping
     public ResponseEntity<OdontologoDTO> registrarOdontologo(@RequestBody OdontologoDTO odontologo) throws OdontologoExistenteException {
-        // Buscar por matricula en lugar de id, ya que el id aún no existe
         try {
             Odontologo odontologoExistente = odontologoService.buscarPorMatricula(odontologo.getMatricula());
             throw new OdontologoExistenteException("Odontologo ya existente con matricula: " + odontologo.getMatricula());

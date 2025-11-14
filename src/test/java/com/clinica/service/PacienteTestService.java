@@ -7,6 +7,7 @@ import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.exception.TurnoComprometidoException;
 import com.clinica.repository.DomicilioRepository;
 import com.clinica.repository.PacienteRepository;
+import com.clinica.repository.TurnoRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +28,16 @@ class PacienteTestService {
     @Autowired
     PacienteRepository pacienteRepository;
 
+    @Autowired
+    TurnoRepository turnoRepository;
+
+
     Domicilio domicilioInicial;
     Paciente pacienteInicial;
 
     @BeforeEach
     public void setup(){
+        turnoRepository.deleteAll();
         pacienteRepository.deleteAll();
         domicilioRepository.deleteAll();
         domicilioInicial = domicilioRepository.save(new Domicilio("Evergreen",742,"Springfield","AnyState"));

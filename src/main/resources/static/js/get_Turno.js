@@ -1,4 +1,3 @@
-// filepath: /Users/naranjax/IdeaProjects/tp-microservicios-clinica-odontologica/src/main/resources/static/js/get_Turno.js
 
 window.deleteTurnoBy = function(id){
     fetch('http://localhost:8080/turnos/' + id, { method: 'DELETE' })
@@ -17,7 +16,6 @@ window.findTurnoBy = function(id){
     fetch('http://localhost:8080/turnos/' + id)
         .then(res => { if (!res.ok) throw new Error(res.statusText); return res.json(); })
         .then(turnoDTO => {
-            // turnoDTO: {id, fecha, pacienteId, odontologoId}
             const updateDiv = document.getElementById('div_turno_updating');
             if (!updateDiv) { alert(JSON.stringify(turnoDTO, null, 2)); return; }
             const inputId = document.getElementById('turno_id');
@@ -32,7 +30,6 @@ window.findTurnoBy = function(id){
             if (inputPacienteId) inputPacienteId.value = turnoDTO.pacienteId || '';
             if (inputOdontologoId) inputOdontologoId.value = turnoDTO.odontologoId || '';
 
-            // intentar obtener nombres para mostrar (opcionales)
             if (turnoDTO.pacienteId) {
                 fetch('http://localhost:8080/paciente/' + turnoDTO.pacienteId)
                     .then(r => r.ok ? r.json() : null)
@@ -62,7 +59,6 @@ function renderTurnoRowInnerHTML(turno, pacienteNombre, odontologoNombre){
         '<td>' + deleteButton + '</td>';
 }
 
-// helper para obtener nombre completo de paciente/odontologo por id
 function fetchNombrePaciente(id){
     if (!id) return Promise.resolve('');
     return fetch('http://localhost:8080/paciente/' + id)
@@ -78,7 +74,6 @@ function fetchNombreOdontologo(id){
         .catch(()=> '');
 }
 
-// handler del formulario de actualización/creación
 document.addEventListener('DOMContentLoaded', function(){
     const form = document.getElementById('update_turno_form');
     if (!form) return;
@@ -118,8 +113,6 @@ document.addEventListener('DOMContentLoaded', function(){
             if (!res.ok) throw new Error(res.statusText);
             return res.json();
         }).then(result => {
-            // resultado puede ser TurnoDTO (POST) o Turno (PUT)
-            // recargar lista para simplificar
             loadAllTurnos();
             const updateDiv = document.getElementById('div_turno_updating');
             if (updateDiv) updateDiv.style.display = 'none';

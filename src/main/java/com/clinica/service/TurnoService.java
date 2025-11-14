@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TurnoService {
@@ -44,7 +43,6 @@ public class TurnoService {
     public TurnoDTO turnoATurnoDTO(Turno turno){
         TurnoDTO turnoDTO= new TurnoDTO();
         turnoDTO.setId(turno.getId());
-        // Evitar NPE si el turno no tiene paciente u odontologo asociados
         if (turno.getPaciente() != null) {
             turnoDTO.setPacienteId(turno.getPaciente().getId());
         } else {
