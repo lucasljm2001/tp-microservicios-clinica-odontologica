@@ -113,16 +113,6 @@ class PacienteTestService {
 
     }
 
-    /*@Test
-    public void buscarPorNombre(){
-        //CUANDO
-        Paciente paciente= pacienteService.buscarGenerico(pacienteInicial.getNombre());
-        System.out.println("datos encontrados: "+paciente.toString());
-        //ENTONCES
-        Assertions.assertNotNull(paciente);
-        Assertions.assertEquals("Homero",paciente.getNombre());
-    }
-*/
     @Test
     public void buscarTodosLosPacientes(){
         //DADO
