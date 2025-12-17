@@ -5,6 +5,7 @@ import com.clinica.dto.TurnoDTO;
 import com.clinica.entity.Odontologo;
 import com.clinica.entity.Paciente;
 import com.clinica.entity.Turno;
+import com.clinica.exception.FechaInvalidaException;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.repository.OdontologoRepository;
 import com.clinica.repository.PacienteRepository;
@@ -12,6 +13,7 @@ import com.clinica.repository.TurnoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,7 +25,7 @@ public class TurnoService {
     @Autowired
     private OdontologoRepository odontologoRepository;
 
-    public TurnoDTO guardarTurno(Long pacienteId, Long odontologoId, TurnoDTO turnoDTO) throws ResourceNotFoundException {
+    public TurnoDTO guardarTurno(Long pacienteId, Long odontologoId, TurnoDTO turnoDTO) throws ResourceNotFoundException, FechaInvalidaException {
         Turno turno= new Turno();
         var pacienteOpt= pacienteRepository.findById(pacienteId);
         if(pacienteOpt.isEmpty()){
@@ -33,6 +35,7 @@ public class TurnoService {
         if(odontologoOpt.isEmpty()){
             throw new ResourceNotFoundException("Odontologo no encontrado con id: " + odontologoId);
         }
+        if (turnoDTO.getFecha().isBefore(LocalDate.now())) throw new FechaInvalidaException("No puede elegirse una fecha antes de la de hoy");
         turno.setPaciente(pacienteOpt.get());
         turno.setOdontologo(odontologoOpt.get());
         turno.setFecha(turnoDTO.getFecha());

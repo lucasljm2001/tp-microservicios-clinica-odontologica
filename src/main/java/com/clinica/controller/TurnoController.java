@@ -4,6 +4,7 @@ package com.clinica.controller;
 import com.clinica.dto.OdontologoDTO;
 import com.clinica.dto.PacienteDTO;
 import com.clinica.dto.TurnoDTO;
+import com.clinica.exception.FechaInvalidaException;
 import com.clinica.exception.ResourceNotFoundException;
 import com.clinica.service.OdontologoService;
 import com.clinica.service.PacienteService;
@@ -30,7 +31,7 @@ public class TurnoController {
         this.turnoService = turnoService;
     }
     @PostMapping
-    public ResponseEntity<TurnoDTO> registrarTurno(@RequestBody TurnoDTO turno) throws ResourceNotFoundException {
+    public ResponseEntity<TurnoDTO> registrarTurno(@RequestBody TurnoDTO turno) throws ResourceNotFoundException, FechaInvalidaException {
         PacienteDTO pacienteBuscado= pacienteService.buscarPacientePorId(turno.getPacienteId());
         OdontologoDTO odontologoBuscado= odontologoService.buscarOdontologoPorId(turno.getOdontologoId());
         return ResponseEntity.ok(turnoService.guardarTurno(pacienteBuscado.getId(), odontologoBuscado.getId(), turno));

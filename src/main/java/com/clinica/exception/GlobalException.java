@@ -23,5 +23,10 @@ public class GlobalException {
     public ResponseEntity<ExceptionDTO> turnoComprometidoException(TurnoComprometidoException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
+
+    @ExceptionHandler({FechaInvalidaException.class})
+    public ResponseEntity<ExceptionDTO> fechaInvalidaException(FechaInvalidaException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
 }
 

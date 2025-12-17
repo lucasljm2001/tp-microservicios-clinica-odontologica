@@ -109,14 +109,20 @@ document.addEventListener('DOMContentLoaded', function(){
             method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(turnoToSend)
-        }).then(res => {
-            if (!res.ok) throw new Error(res.statusText);
-            return res.json();
-        }).then(result => {
+        }).then(res =>
+            res.json()
+                .then(body => {
+                    if (!res.ok) {
+                        const msg = (body && body.message) ? body.message : res.statusText;
+                        throw new Error(msg);
+                    }
+                    return body;
+                })
+        ).then(result => {
             loadAllTurnos();
             const updateDiv = document.getElementById('div_turno_updating');
             if (updateDiv) updateDiv.style.display = 'none';
-        }).catch(err => { console.error(err); alert('Error guardando turno'); });
+        }).catch(err => { console.error(err); alert(err.message); });
     });
 });
 
