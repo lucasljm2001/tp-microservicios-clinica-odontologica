@@ -1,4 +1,3 @@
-
 window.deleteTurnoBy = function(id){
     fetch('http://localhost:8080/turnos/' + id, { method: 'DELETE' })
         .then(response => {
@@ -12,12 +11,34 @@ window.deleteTurnoBy = function(id){
         .catch(err => console.error(err));
 }
 
-window.findTurnoBy = function(id){
+
+function setSelectInitialValue(sel, id, label) {
+    if (!sel) return;
+    if (!id) { sel.value = ''; return; }
+    let opt = sel.querySelector('option[value="' + id + '"]');
+    if (!opt) {
+        opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = label || ('Id: ' + id);
+        sel.appendChild(opt);
+    } else if (label) {
+        opt.textContent = label;
+    }
+    opt.selected = true;
+    sel.value = id;
+}
+
+window.findTurnoBy = async function(id){
+    const selPaciente = document.getElementById('paciente_nombre');
+    const selOdontologo = document.getElementById('odontologo_nombre');
     fetch('http://localhost:8080/turnos/' + id)
         .then(res => { if (!res.ok) throw new Error(res.statusText); return res.json(); })
-        .then(turnoDTO => {
+        .then(async turnoDTO => {
             const updateDiv = document.getElementById('div_turno_updating');
-            if (!updateDiv) { alert(JSON.stringify(turnoDTO, null, 2)); return; }
+            if (!updateDiv) {
+                alert(JSON.stringify(turnoDTO, null, 2));
+                return;
+            }
             const inputId = document.getElementById('turno_id');
             const inputFecha = document.getElementById('fechaHora');
             const inputPacienteId = document.getElementById('paciente_id');
@@ -30,18 +51,30 @@ window.findTurnoBy = function(id){
             if (inputPacienteId) inputPacienteId.value = turnoDTO.pacienteId || '';
             if (inputOdontologoId) inputOdontologoId.value = turnoDTO.odontologoId || '';
 
-            if (turnoDTO.pacienteId) {
-                fetch('http://localhost:8080/paciente/' + turnoDTO.pacienteId)
-                    .then(r => r.ok ? r.json() : null)
-                    .then(p => { if (inputPacienteNombre) inputPacienteNombre.value = p ? (p.nombre + ' ' + p.apellido) : ''; })
-                    .catch(()=>{});
+            console.log("El turno es:", turnoDTO)
+            console.log("El paciente es:", inputPacienteNombre)
+            if (inputPacienteNombre) {
+                const pid = turnoDTO.pacienteId || '';
+                if (inputPacienteNombre.tagName === 'SELECT') {
+                    const nombrePaciente = await fetchNombrePaciente(pid)
+                    await loadPatientsIntoSelect()
+                    setSelectInitialValue(selPaciente, pid, nombrePaciente + ' (id:' + pid + ')')
+                } else {
+                    inputPacienteNombre.value = pid ? String(pid) : '';
+                }
             }
-            if (turnoDTO.odontologoId) {
-                fetch('http://localhost:8080/odontologo/' + turnoDTO.odontologoId)
-                    .then(r => r.ok ? r.json() : null)
-                    .then(o => { if (inputOdontologoNombre) inputOdontologoNombre.value = o ? (o.nombre + ' ' + o.apellido) : ''; })
-                    .catch(()=>{});
+
+            if (inputOdontologoNombre) {
+                const oid = turnoDTO.odontologoId || '';
+                if (inputOdontologoNombre.tagName === 'SELECT') {
+                    const nombreOdontologo = await fetchNombreOdontologo(oid)
+                    await loadOdontologosIntoSelect()
+                    setSelectInitialValue(selOdontologo, oid, nombreOdontologo + ' (id:' + oid + ')')
+                } else {
+                    inputOdontologoNombre.value = oid ? String(oid) : '';
+                }
             }
+
 
             updateDiv.style.display = 'block';
             if (inputFecha) inputFecha.focus();
@@ -74,6 +107,46 @@ function fetchNombreOdontologo(id){
         .catch(()=> '');
 }
 
+// Carga la lista de pacientes en el select #paciente_nombre.
+function loadPatientsIntoSelect(){
+    const sel = document.getElementById('paciente_nombre');
+    if (!sel) return Promise.resolve();
+    return fetch('http://localhost:8080/paciente')
+        .then(r => { if (!r.ok) throw new Error('Error cargando pacientes'); return r.json(); })
+        .then(data => {
+            sel.innerHTML = '<option value="">-- Seleccione un paciente --</option>';
+            data.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.text = (p.nombre ? p.nombre : '') + ' ' + (p.apellido ? p.apellido : '') + ' (id:' + p.id + ')';
+                sel.appendChild(opt);
+            });
+        })
+        .catch(err => {
+            console.error('No se pudieron cargar pacientes:', err);
+        });
+}
+
+
+function loadOdontologosIntoSelect(){
+    const sel = document.getElementById('odontologo_nombre');
+    if (!sel) return Promise.resolve();
+    return fetch('http://localhost:8080/odontologo')
+        .then(r => { if (!r.ok) throw new Error('Error cargando odontologos'); return r.json(); })
+        .then(data => {
+            sel.innerHTML = '<option value="">-- Seleccione un odontologo --</option>';
+            data.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.text = (p.nombre ? p.nombre : '') + ' ' + (p.apellido ? p.apellido : '') + ' (id:' + p.id + ')';
+                sel.appendChild(opt);
+            });
+        })
+        .catch(err => {
+            console.error('No se pudieron cargar pacientes:', err);
+        });
+}
+
 document.addEventListener('DOMContentLoaded', function(){
     const form = document.getElementById('update_turno_form');
     if (!form) return;
@@ -81,8 +154,8 @@ document.addEventListener('DOMContentLoaded', function(){
         evt.preventDefault();
         const id = document.getElementById('turno_id').value || null;
         const fecha = document.getElementById('fechaHora').value || null;
-        const pacienteIdVal = document.getElementById('paciente_id').value || null;
-        const odontologoIdVal = document.getElementById('odontologo_id').value || null;
+        const pacienteIdVal = document.getElementById('paciente_nombre').value || null;
+        const odontologoIdVal = document.getElementById('odontologo_nombre').value || null;
 
         const isUpdate = !!id;
         var turnoToSend;
@@ -112,23 +185,31 @@ document.addEventListener('DOMContentLoaded', function(){
         }).then(res => {
             if (!res.ok) throw new Error(res.statusText);
             return res.json();
-        }).then(result => {
+        }).then(() => {
             loadAllTurnos();
             const updateDiv = document.getElementById('div_turno_updating');
             if (updateDiv) updateDiv.style.display = 'none';
         }).catch(err => { console.error(err); alert('Error guardando turno'); });
     });
+
+
 });
 
 function openCreateTurnoForm(){
     const updateDiv = document.getElementById('div_turno_updating');
     const form = document.getElementById('update_turno_form');
     if (!updateDiv || !form) return;
-    const ids = ['turno_id','fechaHora','paciente_id','paciente_nombre','odontologo_id','odontologo_nombre'];
+    const ids = ['turno_id','fechaHora','paciente_nombre','odontologo_nombre'];
     ids.forEach(i => { const el = document.getElementById(i); if (el) el.value = ''; });
     const submitBtn = form.querySelector('button[type="submit"]');
     if (submitBtn) submitBtn.textContent = 'Crear';
-    updateDiv.style.display = 'block';
+    // refrescar lista de pacientes antes de mostrar
+    loadPatientsIntoSelect().then(()=>{
+        updateDiv.style.display = 'block';
+    });
+    loadOdontologosIntoSelect().then(()=>{
+        updateDiv.style.display = 'block';
+    });
 }
 
 function loadAllTurnos(){
@@ -182,4 +263,3 @@ window.addEventListener('load', function(){
     if (btnClear && inputSearch) btnClear.addEventListener('click', () => { inputSearch.value = ''; loadAllTurnos(); });
     if (btnCreate) btnCreate.addEventListener('click', () => openCreateTurnoForm());
 });
-

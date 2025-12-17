@@ -79,22 +79,19 @@
 
                 <h5>Paciente</h5>
                 <div class="form-group">
-                    <label>Id Paciente:</label>
-                    <input type="number" class="form-control" id="paciente_id" placeholder="Id del paciente" required>
-                </div>
-                <div class="form-group">
-                    <label>Nombre Paciente (opcional):</label>
-                    <input type="text" class="form-control" id="paciente_nombre" readonly>
+                    <label>Nombre Paciente (seleccione):</label>
+                    <select class="form-control" id="paciente_nombre">
+                        <option value="">-- Seleccione un paciente --</option>
+                    </select>
                 </div>
 
                 <h5>Odontólogo</h5>
                 <div class="form-group">
-                    <label>Id Odontologo:</label>
-                    <input type="number" class="form-control" id="odontologo_id" placeholder="Id del odontologo" required>
-                </div>
-                <div class="form-group">
-                    <label>Nombre Odontologo (opcional):</label>
-                    <input type="text" class="form-control" id="odontologo_nombre" readonly>
+                    <label>Nombre Odontologo (seleccione):</label>
+                    <select class="form-control" id="odontologo_nombre">
+                        <option value="">-- Seleccione un paciente --</option>
+                    </select>
+
                 </div>
 
                 <button type="submit" class="btn btn-primary">Modificar</button>
